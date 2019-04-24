@@ -1,0 +1,122 @@
+<form action="{:url()}" method="post" class="form_single">
+    <div class="box">
+      <div class="box-body">
+        <div class="row">
+            
+
+          <div class="col-md-6">
+              <div class="form-group">
+                <label>保险种类</label>
+                <!-- <span class="">（文章分类）</span> -->
+                  <select name="category_id" class="form-control">
+                      {volist name='insurance_category_list' id='vo'}
+                          <option value="{$vo['id']}" {notempty name="info['category_id']"}{if condition="$info['category_id'] eq $vo['id']"} selected="selected" {/if}{/notempty} >{$vo['name']}</option>
+                      {/volist}
+                  </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                  <label>保险名称</label>
+                  <input class="form-control" name="name" placeholder="请输入保险名称" required value="{$info['name']|default=''}" type="text">
+                </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="form-group">
+                  <label>封面图片</label>
+                  <span class="">（请上传单张封面图片）</span>
+                  <br/>
+                  {assign name="headimgurl" value="$info.headimgurl|default='0'" /}
+                  {:widget('file/index', ['name' => 'headimgurl', 'value' => $headimgurl, 'type' => 'img'])}
+              </div>
+            </div>
+            
+
+          <div class="col-md-3">
+              <div class="form-group">
+                  <label>保险金额</label>
+                  <input class="form-control" name="price" required placeholder="请输入保险金额" value="{$info['price']|default=0}" type="text">
+                </div>
+          </div>
+
+          <div class="col-md-3">
+              <div class="form-group">
+                  <label>金额组成一</label>
+                  <input class="form-control" name="price_1" required placeholder="" value="{$info['price_1']|default=0}" type="text">
+                </div>
+          </div>
+
+          <div class="col-md-3">
+              <div class="form-group">
+                  <label>金额组成二</label>
+                  <input class="form-control" name="price_2" required placeholder="" value="{$info['price_2']|default=0}" type="text">
+                </div>
+          </div>
+
+
+          <div class="col-md-12">
+            <div class="form-group">
+                <label>保险简介</label>
+                
+                <textarea class="form-control" name="description" required rows="3" placeholder="请输入文章描述信息/简介">{$info['description']|default=''}</textarea>
+            </div>
+          </div>
+            
+            
+          <!-- <div class="col-md-6">
+            <div class="form-group">
+                <label>附件</label>
+                <span class="">（文章可下载附件）</span>
+                <br/>
+                {assign name="file_id" value="$info.file_id|default='0'" /}
+                {:widget('file/index', ['name' => 'file_id', 'value' => $file_id, 'type' => 'file'])}
+            </div>
+          </div> -->
+            
+          </div>
+        <div class="row">
+                
+          <div class="col-md-12" id="editor-col">
+            
+            <div class="form-group " id="editor-group">
+                <div style="width: 100%; ">
+                    <label>文章内容</label>
+                  </div>
+                <!-- <script id="editor" type="text/plain" name="content" style="width:1000px;"></script> -->
+                <textarea id="editor" type="text/plain" name="content" required style=" width: 100%;" >{$info.content | default=''}</textarea>
+                
+            </div>
+          </div>
+          
+        </div>
+
+      <div class="box-footer">
+          
+        <input type="hidden" name="insurance_id" value="{$info['insurance_id']|default='0'}"/>
+
+<!-- 
+        <button  type="submit" class="btn ladda-button" data-style="slide-up" target-form="form_single">
+            <span class="ladda-label"><i class="fa fa-send"></i> 确 定</span>
+        </button>
+        <a class="btn" onclick="javascript:history.back(-1);return false;"><i class="fa fa-history"></i> 返 回</a> -->
+
+
+        {include file="layout/edit_btn_group"/}
+        
+      </div>
+        
+      </div>
+      </div>
+</form>
+
+<script type="text/javascript" charset="utf-8" src="__STATIC__/widget/admin/editor/ueditor/ueditor.config.js"></script>
+<script type="text/javascript" charset="utf-8" src="__STATIC__/widget/admin/editor/ueditor/ueditor.all.min.js"> </script>
+<script type="text/javascript" charset="utf-8" src="__STATIC__/widget/admin/editor/ueditor/lang/zh-cn/zh-cn.js"></script>
+<script>
+jQuery(function($) {
+    UE.delEditor('editor');
+    var ue = UE.getEditor('editor');
+});
+
+</script>

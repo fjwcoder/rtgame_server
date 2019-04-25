@@ -53,10 +53,7 @@ class Common
     public static $feedbackContentEmpty         = [API_CODE_NAME => 40201, API_MSG_NAME => '反馈内容不可为空'];
     public static $feedbackError                = [API_CODE_NAME => 40202, API_MSG_NAME => '反馈失败'];
 
-    // 保险订单
-    public static $insuranceOrderCreateFail     = [API_CODE_NAME => 40301, API_MSG_NAME => '保险生成失败'];
-    public static $compensateOrderCreateFail    = [API_CODE_NAME => 40302, API_MSG_NAME => '理赔申请失败'];
-    public static $compensateOrderExist         = [API_CODE_NAME => 40303, API_MSG_NAME => '理赔申请中'];
+
     
     
     

@@ -30,7 +30,7 @@ class Redis extends Driver
         'timeout'    => 0,
         'expire'     => 7200,
         'persistent' => false,
-        'prefix'     => 'mami_api_',
+        'prefix'     => 'rtgame_api_',
     ];
 
     /**

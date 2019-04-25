@@ -168,7 +168,7 @@ class Common extends ApiBase
 
         // 1. 获取session_key 和 openid
         $wxapp_session = $this->serviceWxapp->driverWxappli->sessionKey($param['code']);
-
+// dump($wxapp_session); die;
         if($wxapp_session == false){ // 获取用户信息失败
 
             return CommonError::$loginFail;

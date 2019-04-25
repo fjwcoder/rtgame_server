@@ -80,6 +80,11 @@ class Index extends ControllerBase
 
 
     }
+
+
+// 以下是onebase自带的
+
+
     /**
      * 首页方法
      */

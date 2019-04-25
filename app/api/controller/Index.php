@@ -28,12 +28,48 @@ class Index extends ControllerBase
     }
 
 
-
+    // gid 1: 王者荣耀
     public function test(){
-        $res = Db::name('api_copy') ->field('id', true) -> select();
-        $insert = Db::name('api') -> insertAll($res);
-        dump($insert); die;
+        $data = [
+            ['gid'=>2, 'pid'=>5, 'name'=>'比尔吉沃特', 'status'=>1],
+            ['gid'=>2, 'pid'=>5, 'name'=>'德玛西亚', 'status'=>1],
+            ['gid'=>2, 'pid'=>5, 'name'=>'弗雷尔卓德', 'status'=>1],
+            ['gid'=>2, 'pid'=>5, 'name'=>'无畏先锋', 'status'=>1],
+            ['gid'=>2, 'pid'=>5, 'name'=>'恕瑞玛', 'status'=>1],
+            ['gid'=>2, 'pid'=>5, 'name'=>'扭曲丛林', 'status'=>1],
+            ['gid'=>2, 'pid'=>5, 'name'=>'巨龙之巢', 'status'=>1],
+
+            ['gid'=>2, 'pid'=>6, 'name'=>'艾欧尼亚', 'status'=>1],
+            ['gid'=>2, 'pid'=>6, 'name'=>'祖安', 'status'=>1],
+            ['gid'=>2, 'pid'=>6, 'name'=>'诺克萨斯', 'status'=>1],
+            ['gid'=>2, 'pid'=>6, 'name'=>'班德尔城', 'status'=>1],
+            ['gid'=>2, 'pid'=>6, 'name'=>'皮尔特沃夫', 'status'=>1],
+            ['gid'=>2, 'pid'=>6, 'name'=>'战争学院', 'status'=>1],
+            ['gid'=>2, 'pid'=>6, 'name'=>'巨神峰', 'status'=>1],
+            ['gid'=>2, 'pid'=>6, 'name'=>'雷瑟守备', 'status'=>1],
+            ['gid'=>2, 'pid'=>6, 'name'=>'裁决之地', 'status'=>1],
+            ['gid'=>2, 'pid'=>6, 'name'=>'黑色玫瑰', 'status'=>1],
+            ['gid'=>2, 'pid'=>6, 'name'=>'暗影岛', 'status'=>1],
+            ['gid'=>2, 'pid'=>6, 'name'=>'钢铁烈阳', 'status'=>1],
+            ['gid'=>2, 'pid'=>6, 'name'=>'水晶之痕', 'status'=>1],
+            ['gid'=>2, 'pid'=>6, 'name'=>'均衡教派', 'status'=>1],
+            ['gid'=>2, 'pid'=>6, 'name'=>'影流', 'status'=>1],
+            ['gid'=>2, 'pid'=>6, 'name'=>'守望之海', 'status'=>1],
+            ['gid'=>2, 'pid'=>6, 'name'=>'征服之海', 'status'=>1],
+            ['gid'=>2, 'pid'=>6, 'name'=>'卡拉曼达', 'status'=>1],
+            ['gid'=>2, 'pid'=>6, 'name'=>'皮城警备', 'status'=>1],
+
+
+            ['gid'=>2, 'pid'=>7, 'name'=>'男爵领域', 'status'=>1],
+            ['gid'=>2, 'pid'=>7, 'name'=>'峡谷之巅', 'status'=>1],
+
+            ['gid'=>2, 'pid'=>8, 'name'=>'教育网专区', 'status'=>1],
+
+        ];
+        
+        Db::name('game_area') -> insertAll($data);
     }
+
     /**
      * create by fjw in 19.4.1
      * 图片上传

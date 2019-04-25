@@ -21,6 +21,12 @@ use app\common\controller\ControllerBase;
 class Waiter extends ApiBase
 {
 
+    /**
+     * 申请成为代练人员
+     */
+    public function applyWaiter(){
+        
+    }
 
 
 

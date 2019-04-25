@@ -94,7 +94,7 @@ class Common extends ApiBase
         }
 
 
-        $user = $this->logicUser->getUserInfo(['mobile'=>$data['mobile']]);
+        $user = $this->modelUser->getInfo(['mobile'=>$data['mobile']]);
 
         if(empty($user)){
 
@@ -141,7 +141,7 @@ class Common extends ApiBase
 
         
         // 4. 判断用户是否存在
-        $user = $this->logicUser->getUserInfo(['mobile'=>$data['mobile']]);
+        $user = $this->modelUser->getInfo(['mobile'=>$data['mobile']]);
         if(!empty($user)){
             return CommonError::$existThisUser;
         }
@@ -153,7 +153,7 @@ class Common extends ApiBase
             return CommonError::$registerFail;
         }
 
-        $user = $this->logicUser->getUserInfo(['mobile'=>$data['mobile']]);
+        $user = $this->modelUser->getInfo(['mobile'=>$data['mobile']]);
 
         // 将返回的信息格式化成mami项目需要的格式
         return tokenSign(formatReturnUserInfo($user));
@@ -224,34 +224,6 @@ class Common extends ApiBase
     
 
 
-    /**
-     * 前台用户修改密码
-     */
-    // public function userChangePassword($data)
-    // {
-        
-    //     $user = get_member_by_token($data['user_token']);
-        
-    //     $user_info = $this->logicUser->getUserInfo(['id' => $user->member_id]);
-        
-    //     if (empty($data['old_password']) || empty($data['new_password'])) {
-            
-    //         return CommonError::$oldOrNewPassword;
-    //     }
-        
-    //     if (data_md5_key($data['old_password']) !== $user_info['password']) {
-            
-    //         return CommonError::$passwordError;
-    //     }
-
-    //     $user_info['password'] = $data['new_password'];
-        
-    //     $result = $this->logicUser->setInfo($user_info);
-        
-    //     return $result ? CodeBase::$success : CommonError::$changePasswordFail;
-    // }
-
-
     // /**
     //  * 后台用户登录接口逻辑
     //  */
@@ -285,51 +257,5 @@ class Common extends ApiBase
         return tokenSign($formatmember);
     }
     
-    
-    // /**
-    //  * 后台用户注册方法
-    //  */
-    // public function register($data)
-    // {
-        
-    //     $data['nickname']  = $data['username'];
-    //     $data['password']  = data_md5_key($data['password']);
 
-    //     return $this->logicMember->setInfo($data);
-    // }
-    // /**
-    //  * 修改密码
-    //  */
-    // public function changePassword($data)
-    // {
-        
-    //     $member = get_member_by_token($data['user_token']);
-        
-    //     $member_info = $this->logicMember->getMemberInfo(['id' => $member->member_id]);
-        
-    //     if (empty($data['old_password']) || empty($data['new_password'])) {
-            
-    //         return CommonError::$oldOrNewPassword;
-    //     }
-        
-    //     if (data_md5_key($data['old_password']) !== $member_info['password']) {
-            
-    //         return CommonError::$passwordError;
-    //     }
-
-    //     $member_info['password'] = $data['new_password'];
-        
-    //     $result = $this->logicMember->setInfo($member_info);
-        
-    //     return $result ? CodeBase::$success : CommonError::$changePasswordFail;
-    // }
-    
-    // /**
-    //  * 友情链接
-    //  */
-    // public function getBlogrollList()
-    // {
-        
-    //     return $this->modelBlogroll->getList([DATA_STATUS_NAME => DATA_NORMAL], true, 'sort desc,id asc', false);
-    // }
 }

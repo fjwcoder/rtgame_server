@@ -19,17 +19,7 @@ use think\Db;
  */
 class User extends LogicBase
 {
-    
-    /**
-     * create by fjw in 18.12.12
-     * 获取会员信息
-     */
-    public function getUserInfo($where = [], $field = true)
-    {
 
-        
-        return $this->modelUser->getInfo($where, $field);
-    }
     /**
      * create by fjw in 19.3.25
      * 获取会员Index页面信息
@@ -46,28 +36,6 @@ class User extends LogicBase
         
     // }
 
-    /**
-     * create by fjw in 19.3.19
-     * 获取会员详细信息
-     */
-    // public function getUserDetail($where = [], $field = true){
-
-    //     $this->modelUser->alias('u');
-
-    //     $this->modelUser->join = [
-    //         [SYS_DB_PREFIX . 'wx_user w', 'u.id = w.user_id'],
-    //     ];
-
-    //     // 筛选查询字段
-    //     $field = 'u.us_name, u.us_qq, u.mobile, u.id_card, 
-    //               u.address_detail, u.id_card_begintime, 
-    //               u.id_card_endtime, u.us_age, u.status,
-    //               u.us_sheng, u.us_shi, u.us_qu, u.us_zhen,
-    //               w.country, w.sex
-    //         ';
-
-    //     return $this->modelUser->getInfo($where, $field);
-    // }
 
     /**
      * create by fjw in 19.3.19 

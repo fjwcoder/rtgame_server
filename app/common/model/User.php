@@ -20,47 +20,24 @@ class User extends ModelBase
     /**
      * 
      */
-    // public function getUserInfo($where, $field = ''){
-    //     $this->modelWxUser->alias('w');
-    //     $this->modelWxUser->join = [
-    //         [SYS_DB_PREFIX . 'user u', 'u.id = w.user_id'],
-    //     ];
-    //     $select_field = '
-    //         w.wx_id, w.user_id, w.mobile, w.app_openid, w.nickname, w.sex, w.headimgurl,
-    //         w.app_subscribe_time, w.unionid, 
-    //         w.wx_openid, w.city, w.province, w.country, w.wx_subscribe_time,
-    //         w.wx_subscribe_scene, w.wx_qr_scene, w.wx_qr_scene_str,
+    public function getUserInfo($where, $field = ''){
+        $this->modelWxUser->alias('w');
+        $this->modelWxUser->join = [
+            [SYS_DB_PREFIX . 'user u', 'u.id = w.user_id'],
+        ];
+        $select_field = '
+            w.wx_id, w.user_id, w.mobile, w.app_openid, w.nickname, w.sex, w.headimgurl,
+            w.app_subscribe_time, w.unionid, 
+            w.wx_openid, w.city, w.province, w.country, w.wx_subscribe_time,
+            w.wx_subscribe_scene, w.wx_qr_scene, w.wx_qr_scene_str,
 
-    //         u.username, u.password, u.money, u.status
-    //     ';
+            u.username, u.password, u.money, u.status
+        ';
 
-    //     $field = empty($field)?$select_field:$field;
-    //     return $this->modelWxUser->getInfo($where, $field);
-    // }
-
-    /**
-     * wxapp关注后，绑定手机号
-     */
-    public function wxappBindMobile($param = []){
-
-
-        
+        $field = empty($field)?$select_field:$field;
+        return $this->modelWxUser->getInfo($where, $field);
     }
 
-    /**
-     * 获取用户信息
-     * 包括  user表  和  wx_user表
-     */
-    public function getUserDetail(){
-
-    }
-
-    /**
-     * 完善用户信息
-     */
-    public function editUserDetail($param = []){
-
-    }
 
 
     /**

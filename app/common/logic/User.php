@@ -26,6 +26,7 @@ class User extends LogicBase
      */
     public function getUserInfo($where = [], $field = true)
     {
+
         
         return $this->modelUser->getInfo($where, $field);
     }
@@ -49,72 +50,72 @@ class User extends LogicBase
      * create by fjw in 19.3.19
      * 获取会员详细信息
      */
-    public function getUserDetail($where = [], $field = true){
+    // public function getUserDetail($where = [], $field = true){
 
-        $this->modelUser->alias('u');
+    //     $this->modelUser->alias('u');
 
-        $this->modelUser->join = [
-            [SYS_DB_PREFIX . 'wx_user w', 'u.id = w.user_id'],
-        ];
+    //     $this->modelUser->join = [
+    //         [SYS_DB_PREFIX . 'wx_user w', 'u.id = w.user_id'],
+    //     ];
 
-        // 筛选查询字段
-        $field = 'u.us_name, u.us_qq, u.mobile, u.id_card, 
-                  u.address_detail, u.id_card_begintime, 
-                  u.id_card_endtime, u.us_age, u.status,
-                  u.us_sheng, u.us_shi, u.us_qu, u.us_zhen,
-                  w.country, w.sex
-            ';
+    //     // 筛选查询字段
+    //     $field = 'u.us_name, u.us_qq, u.mobile, u.id_card, 
+    //               u.address_detail, u.id_card_begintime, 
+    //               u.id_card_endtime, u.us_age, u.status,
+    //               u.us_sheng, u.us_shi, u.us_qu, u.us_zhen,
+    //               w.country, w.sex
+    //         ';
 
-        return $this->modelUser->getInfo($where, $field);
-    }
+    //     return $this->modelUser->getInfo($where, $field);
+    // }
 
     /**
      * create by fjw in 19.3.19 
      * 完善用户资料
      */
-    public function editUserDetail($param = []){
+    // public function editUserDetail($param = []){
 
-        $decoded_user_token = $param['decoded_user_token'];
-        // 1. 拼接数据
-        $data_user = [
-            'us_name'=>$param['us_name'], 
-            'mobile'=>$param['mobile'], 
-            'id_card'=>$param['id_card'], 
-            'address_detail'=>$param['address_detail'], 
-            'id_card_begintime'=>$param['id_card_begintime'], 
-            'id_card_endtime'=>$param['id_card_endtime'], 
-            'us_age'=>intval($param['us_age']),
-            'us_sheng'=>$param['us_sheng'], 
-            'us_shi'=>$param['us_shi'], 
-            'us_qu'=>$param['us_qu']
-            // 'us_zhen'=>$param['us_zhen']
-        ];
-        $data_wx_user = ['country'=>$param['country'],'sex'=>intval($param['sex'])];
-        $success = true;
+    //     $decoded_user_token = $param['decoded_user_token'];
+    //     // 1. 拼接数据
+    //     $data_user = [
+    //         'us_name'=>$param['us_name'], 
+    //         'mobile'=>$param['mobile'], 
+    //         'id_card'=>$param['id_card'], 
+    //         'address_detail'=>$param['address_detail'], 
+    //         'id_card_begintime'=>$param['id_card_begintime'], 
+    //         'id_card_endtime'=>$param['id_card_endtime'], 
+    //         'us_age'=>intval($param['us_age']),
+    //         'us_sheng'=>$param['us_sheng'], 
+    //         'us_shi'=>$param['us_shi'], 
+    //         'us_qu'=>$param['us_qu']
+    //         // 'us_zhen'=>$param['us_zhen']
+    //     ];
+    //     $data_wx_user = ['country'=>$param['country'],'sex'=>intval($param['sex'])];
+    //     $success = true;
         
-        Db::startTrans();
-        try{
+    //     Db::startTrans();
+    //     try{
 
-            if($this->modelUser->updateInfo(['id'=>$decoded_user_token->user_id, 'status'=>1], $data_user)) {
-                $this->modelWxUser->updateInfo(['user_id'=>$decoded_user_token->user_id, 'app_openid'=>$decoded_user_token->app_openid], $data_wx_user);
+    //         if($this->modelUser->updateInfo(['id'=>$decoded_user_token->user_id, 'status'=>1], $data_user)) {
+    //             $this->modelWxUser->updateInfo(['user_id'=>$decoded_user_token->user_id, 'app_openid'=>$decoded_user_token->app_openid], $data_wx_user);
             
-                Db::commit();
+    //             Db::commit();
 
-            }else{
-                $success = false;
-                $result_code = CommonError::$editUserDetailFail; // 用户详细信息修改失败
-            }
-        }catch(\Exception $e){
-            dump($e);
-            Db::rollback();
-            $success = false;
-            $result_code = CommonError::$bindMobileFail; // 绑定手机号失败
-        }
+    //         }else{
+    //             $success = false;
+    //             $result_code = CommonError::$editUserDetailFail; // 用户详细信息修改失败
+    //         }
+    //     }catch(\Exception $e){
+    //         dump($e);
+    //         Db::rollback();
+    //         $success = false;
+    //         $result_code = CommonError::$bindMobileFail; // 绑定手机号失败
+    //     }
         
-        if(!$success){
-            return $result_code;
-        }
-    }
+    //     if(!$success){
+    //         return $result_code;
+    //     }
+    // }
 
     /**
      * create by fjw in 19.3.19 
@@ -161,9 +162,7 @@ class User extends LogicBase
             if(empty($user)){ // 不存在，先创建用户；先插入user表，再返回存入wx_user表
                 // 拼凑数据
                 $user_data = [
-                    'mobile'=>$param['mobile'], 'unionid'=>$wx_user['unionid'], 
-                    'us_headpic'=>$wx_user['headimgurl'], 
-                    'status'=>1
+                    'mobile'=>$param['mobile'], 'status'=>1
                 ];
                 if($this->modelUser->setInfo($user_data)){ // 插入user表
                     $user_id = $this->modelUser->getLastInsID();

@@ -17,23 +17,26 @@ namespace app\common\model;
  */
 class User extends ModelBase
 {
-    
-    // public function userRegist($param){
-    //     $data = [
-    //         'app_openid' => $param['openid'],
-    //         'nickname' => $param['nickName'],
-    //         'sex' => $param['gender'],
-    //         'headimgurl' => $param['avatarUrl'],
-    //         'country' => $param['country'],
-    //         'province' => $param['province'],
-    //         'city' => $param['city'],
-    //         'app_subscribe_time' => time(),
-    //         'unionid' =>$param['unionid']
+    /**
+     * 
+     */
+    // public function getUserInfo($where, $field = ''){
+    //     $this->modelWxUser->alias('w');
+    //     $this->modelWxUser->join = [
+    //         [SYS_DB_PREFIX . 'user u', 'u.id = w.user_id'],
     //     ];
+    //     $select_field = '
+    //         w.wx_id, w.user_id, w.mobile, w.app_openid, w.nickname, w.sex, w.headimgurl,
+    //         w.app_subscribe_time, w.unionid, 
+    //         w.wx_openid, w.city, w.province, w.country, w.wx_subscribe_time,
+    //         w.wx_subscribe_scene, w.wx_qr_scene, w.wx_qr_scene_str,
 
-    //     return $this->modelWxUser->setInfo($data);
+    //         u.username, u.password, u.money, u.status
+    //     ';
+
+    //     $field = empty($field)?$select_field:$field;
+    //     return $this->modelWxUser->getInfo($where, $field);
     // }
-
 
     /**
      * wxapp关注后，绑定手机号

@@ -20,15 +20,4 @@ class WxUser extends ModelBase
     
 
 
-    /**
-     * wxapp关注后，绑定手机号
-     */
-    public function wxappBindMobile($param = []){
-
-
-        
-    }
-
-
-
 }

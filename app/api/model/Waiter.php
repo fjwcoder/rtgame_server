@@ -11,11 +11,14 @@
 
 namespace app\api\model;
 
-use app\common\model\ModelBase;
 
-class ApiBase extends ModelBase
+/**
+ * 
+ */
+class Waiter extends ApiBase
 {
+   
 
-    
-    
+
+   
 }

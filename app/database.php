@@ -4,13 +4,13 @@ return [
     // 数据库类型
     'type'            => 'mysql',
     // 服务器地址
-    'hostname'        => '127.0.0.1',
+    'hostname'        => '140.249.17.72',
     // 数据库名
     'database'        => 'rtgame',
     // 用户名
     'username'        => 'root',
     // 密码
-    'password'        => '19920104',
+    'password'        => 'ruitong2019',
     // 端口
     'hostport'        => '3306',
     // 连接dsn

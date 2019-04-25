@@ -26,6 +26,7 @@ class Waiter extends ApiBase
      */
     public function applyWaiter(){
         
+        return $this->apiReturn($this->logicWaiter->applyWaiter($this->param));
     }
 
 

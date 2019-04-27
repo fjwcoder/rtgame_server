@@ -25,8 +25,8 @@ class Game extends ApiBase
      * 获取游戏列表
      */
     public function getGameServer(){
-
-        return $this->apiReturn($this->logicGame->getGameServer($this->param));
+        $gid = isset($this->param['gid'])?$this->param['gid']:0;
+        return $this->apiReturn($this->logicGame->getGameServer($gid));
     }
 
     /**

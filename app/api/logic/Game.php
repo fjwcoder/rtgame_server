@@ -20,11 +20,15 @@ use app\api\error\Common as CommonError;
 class Game extends ApiBase
 {
     // 获取游戏列表
-    public function getGameServer(){
+    public function getGameServer($gid = 0){
+        $where = ['status'=>1];
+        if($gid != 0){
+            $where['gid'] = $gid;
+        }
         $data = [
-            'game'=>$this->getGameList(['status'=>1], 'id, cname'),
-            'plantform'=>$this->getGamePlantform(['status'=>1], 'id, gid, name, area_num'),
-            'area'=>$this->getGameArea(['status'=>1], 'id, gid, pid, name')
+            'game'=>$this->getGameList($where, 'id, cname'),
+            'plantform'=>$this->getGamePlantform($where, 'id, gid, name, area_num'),
+            'area'=>$this->getGameArea($where, 'id, gid, pid, name')
         ];
 
         return $data;

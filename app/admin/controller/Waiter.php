@@ -9,34 +9,22 @@
 // | Repository |   |
 // +---------------------------------------------------------------------+
 
-namespace app\index\controller;
+namespace app\admin\controller;
 
 /**
- * 前端首页控制器
+ * 
  */
-class Index extends IndexBase
+class Waiter extends AdminBase
 {
-
-    // 首页
-    public function index($cid = 0)
-    {
-        echo 'index'; 
-    }
     
-    // 详情
-    public function details($id = 0)
+    /**
+     * 获取代练人员名单
+     */
+    public function index()
     {
+
+
         
-        $where = [];
-        
-        !empty((int)$id) && $where['a.id'] = $id;
-        
-        $data = $this->logicArticle->getArticleInfo($where);
-        
-        $this->assign('article_info', $data);
-        
-        $this->assign('category_list', $this->logicArticle->getArticleCategoryList([], true, 'create_time asc', false));
-        
-        return $this->fetch('details');
+        return $this->fetch('index');
     }
 }

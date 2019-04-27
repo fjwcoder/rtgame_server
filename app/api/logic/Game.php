@@ -19,10 +19,11 @@ use app\api\error\Common as CommonError;
  */
 class Game extends ApiBase
 {
+    // 获取游戏列表
     public function getGameServer(){
         $data = [
             'game'=>$this->getGameList(['status'=>1], 'id, cname'),
-            'plantform'=>$this->getGamePlantform(['status'=>1], 'id, gid, name'),
+            'plantform'=>$this->getGamePlantform(['status'=>1], 'id, gid, name, area_num'),
             'area'=>$this->getGameArea(['status'=>1], 'id, gid, pid, name')
         ];
 
@@ -32,7 +33,7 @@ class Game extends ApiBase
     public function getGameList($where, $field){
         
         $list = $this->modelGameList->getList($where, $field, 'id', false);
-// dump($list); die;
+
         return $list;
     }
 
@@ -50,6 +51,16 @@ class Game extends ApiBase
         return $list;
     }
 
+    // 获取游戏服务列表
+    public function getGServerList($gid = 0){
+        $where = ['status'=>1];
+        if($gid != 0){
+            $where['gid'] = $gid;
+        }
+        $list = $this->modelGameServer->getList($where, true, 'server_sort', false);
+
+        return $list;
+    }
 
 
     

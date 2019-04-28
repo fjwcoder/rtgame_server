@@ -25,7 +25,8 @@ class Order extends ApiBase
 
         $decoded_user_token = $param['decoded_user_token'];
         $user_id = $decoded_user_token->user_id;
-
+        $dataArray = json_decode($param['dataArray'], true);
+// dump($dataArray); die; 
         /**
          * 做假数据，测试生成订单
          */
@@ -52,7 +53,7 @@ class Order extends ApiBase
         $pay_money = 0; // 订单总金额
         $order_id = 'GP'.setOrderID(); // 游戏代练订单号
 
-        foreach($param['dataArray'] as $k=>$v){
+        foreach($dataArray as $k=>$v){
             $order_detail[] = [
                 'order_id'=>$order_id,
                 'user_id'=>$user_id,
@@ -69,7 +70,7 @@ class Order extends ApiBase
         $order = [
             
             'order_id'=>$order_id,
-            'use_id' =>intval($user_id),
+            'user_id' =>intval($user_id),
             'game_id' => intval($param['game_id']),
             'plantform_id'=>intval($param['plantform_id']),
             'area_name'=>$param['area_name'],
@@ -78,11 +79,11 @@ class Order extends ApiBase
             'game_password'=>$param['game_password'],
             'game_user'=>$param['game_user'], // 游戏角色名称
             'pay_money' => $pay_money,
-            'game_info' =>  $param['game_info'],
-            'special_info' =>  $param['special_info'],
+            'game_info' =>  isset($param['game_info'])?$param['game_info']:'',
+            'special_info' =>  isset($param['special_info'])?$param['special_info']:'',
             'step' =>  1,
             'waiter_id' =>  0,
-            'create_time' => date('Y-m-d H:i:s', time()),
+            'create_time' => time(),
             'pay_time' =>  '',
             'finish_time' => '',
             'status' =>  1,

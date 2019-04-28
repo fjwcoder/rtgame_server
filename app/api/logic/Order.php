@@ -69,7 +69,7 @@ class Order extends ApiBase
         $order = [
             
             'order_id'=>$order_id,
-            'use_id' =>intval($user_id),
+            'user_id' =>intval($user_id),
             'game_id' => intval($param['game_id']),
             'plantform_id'=>intval($param['plantform_id']),
             'area_name'=>$param['area_name'],
@@ -112,5 +112,32 @@ class Order extends ApiBase
        return $success;
 
     }
+
+     /**
+     * create by fjw in 19.3.14
+     * 订单记录
+     */
+     //  order_detail id oid order_id user_id server_id server_price server_img
+     //  order        id order_id  user_id game_id plantform_id area_name user_mobile game_account game_password game_user pay_money game_info 
+     // special_info step waiter_id create_time pay_time finish_time status
+
+
+
+    public function getOrderList($where=[], $field = '', $order='a.order_id desc',$paginate = false){
+        $field = 'a.id,a.order_id ,v.cname as game_name, j.name as plantform_name, a.area_name, a.pay_money, a.step,a.status, a.create_time';
+        $this->modelOrder->alias('a');//设置当前数据表的别名
+
+        $this->modelOrder->join = [
+
+            [SYS_DB_PREFIX."game_list v", "a.game_id = v.id", "left"],
+            [SYS_DB_PREFIX."game_plantform j", " a.plantform_id = j.id", "left"],
+            
+        ];
+
+        return $this->modelOrder->getList($where, $field, $order, $paginate);
+
+    }
+
+
     
 }

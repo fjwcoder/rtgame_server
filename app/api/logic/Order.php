@@ -125,7 +125,8 @@ class Order extends ApiBase
 
 
     public function getOrderList($where=[], $field = '', $order='a.order_id desc',$paginate = false){
-        $field = 'a.id,a.order_id ,v.cname as game_name, j.name as plantform_name, a.area_name, a.pay_money, a.step,a.status, a.create_time';
+        $field = 'a.id, a.order_id, v.cname as game_name, j.name as plantform_name, 
+                a.area_name, a.pay_money, a.step, a.status, a.create_time';
         $this->modelOrder->alias('a');//设置当前数据表的别名
 
         $this->modelOrder->join = [

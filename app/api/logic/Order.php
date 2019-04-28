@@ -58,7 +58,7 @@ class Order extends ApiBase
                 'order_id'=>$order_id,
                 'user_id'=>$user_id,
                 'server_id'=>$v['server_id'],
-                'begin_info'=>$v['begin_info'],
+                'begin_info'=>isset($v['begin_info'])?$v['begin_info']:'',
                 'end_info'=>$v['end_info'],
                 'server_price'=>$v['server_price'],
                 'server_img'=>'',
@@ -110,7 +110,12 @@ class Order extends ApiBase
             Db::rollback();
         }
         
-       return $success;
+        if($success){
+            return ['status'=>$success, 'msg'=>'订单生成成功', 'oid'=>$oid,'order_id'=>$order_id];
+        }else{
+            return ['status'=>$success, 'msg'=>'订单生成失败'];
+        }
+
 
     }
 

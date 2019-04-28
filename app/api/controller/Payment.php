@@ -23,11 +23,11 @@ class Payment extends ApiBase
 {
     /**
      * create by fjw in 19.3.25
-     * 保险业务订单支付
+     * 
      */
-    public function insurancePay(){
+    public function orderPay(){
 
-        return $this->apiReturn($this->logicPayment->insurancePay($this->param));
+        return $this->apiReturn($this->logicPayment->orderPay($this->param));
 
     }
     

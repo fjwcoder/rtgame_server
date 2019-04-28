@@ -51,7 +51,7 @@ class Waiter extends ApiBase
             'id_card' => $param['id_card'],
             'headimgurl' =>$user['headimgurl'],
             'game_id_list' =>$param['game_id_list'],
-            
+            'status' => 3
             
         ];
 
@@ -65,6 +65,7 @@ class Waiter extends ApiBase
         
 
     }
+    
 
     
 }

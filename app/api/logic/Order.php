@@ -22,127 +22,94 @@ class Order extends ApiBase
      * 创建订单
      */
     public function creatOrders($param = []){
+
         $decoded_user_token = $param['decoded_user_token'];
-        // dump($decoded_user_token);
         $user_id = $decoded_user_token->user_id;
-        $server =  $param['dataArray'];
-        $pay_money=0;
-        foreach($server as $k=>$v){
-           
-           $pay_money +=  $v['server_price'];  
-    
+
+        /**
+         * 做假数据，测试生成订单
+         */
+        // $param = [
+        //     'game_id' => 1,
+        //     'plantform_id'=>2,
+        //     'area_name'=>'area_name',
+        //     'user_mobile'=>'18767676767',
+        //     'game_account'=>'game_account',
+        //     'game_password'=>'game_password',
+        //     'game_user'=>'game_user', // 游戏角色名称
+        //     'game_info' =>  'game_info',
+        //     'special_info' =>  'special_info',
+        //     'dataArray'=> [
+        //         [
+        //             'server_id'=>'server_id', 'begin_info'=>'begin_info',
+        //             'end_info'=>'end_info', 'server_price'=>10,
+        //         ]
+        //     ]
+        // ];
+
+
+        $success = false; // 方法是否执行成功
+        $pay_money = 0; // 订单总金额
+        $order_id = 'GP'.setOrderID(); // 游戏代练订单号
+
+        foreach($param['dataArray'] as $k=>$v){
+            $order_detail[] = [
+                'order_id'=>$order_id,
+                'user_id'=>$user_id,
+                'server_id'=>$v['server_id'],
+                'begin_info'=>$v['begin_info'],
+                'end_info'=>$v['end_info'],
+                'server_price'=>$v['server_price'],
+                'server_img'=>'',
+            ];
+            $pay_money +=  $v['server_price'];  
         }
-        // dump($user);
-        $order_id = setOrderID();
+
+        
         $order = [
             
             'order_id'=>$order_id,
-            'use_id' =>$user_id,
-            'game_id' => $param['game_id'],
-            'plantform_id'=>$param['plantform_id'],
+            'use_id' =>intval($user_id),
+            'game_id' => intval($param['game_id']),
+            'plantform_id'=>intval($param['plantform_id']),
             'area_name'=>$param['area_name'],
             'user_mobile'=>$param['user_mobile'],
             'game_account'=>$param['game_account'],
             'game_password'=>$param['game_password'],
-            'game_user'=>$param['game_user'],
+            'game_user'=>$param['game_user'], // 游戏角色名称
             'pay_money' => $pay_money,
             'game_info' =>  $param['game_info'],
             'special_info' =>  $param['special_info'],
             'step' =>  1,
             'waiter_id' =>  0,
             'create_time' => date('Y-m-d H:i:s', time()),
-            'pay_time' =>  0,
-            'finish_time' =>0,
+            'pay_time' =>  '',
+            'finish_time' => '',
             'status' =>  1,
-
-
             
         ];
-       
-        $server =  $param['dataArray'];
-            foreach($server as $k=>$v){
-                // echo $k."=>".$v."<br />"; 
-                $order_detail[] = [
-                    // 'oid'=>$oid,
-                    'order_id'=>$order_id,
-                    'user_id'=>$user_id,
-    
-                    'server_id'=>$v['server_id'],
-                    'begin_info'=>$v['begin_info'],
-                    'end_info'=>$v['begin_info'],
-                    'server_price'=>$v['server_price'],
-                    'server_img'=>'0',
-                  
-
-    
-                ];
-              
-        
-            }
-   
-            $server =  $param['dataArray'];
-            foreach($server as $k=>$v){
-                // echo $k."=>".$v."<br />"; 
-                $order_detail[] = [
-                    // 'oid'=>$oid,
-                    'order_id'=>$order_id,
-                    'user_id'=>$user_id,
-    
-                    'server_id'=>$v['server_id'],
-                    'begin_info'=>$v['begin_info'],
-                    'end_info'=>$v['begin_info'],
-                    'server_price'=>$v['server_price'],
-                    'server_img'=>'0',
-                  
-
-    
-                ];
-              
-        
-            }
 
         // 执行插入
         Db::startTrans();
         try{
-           
-            // order insert 
-            // insert
-            $this->modelOrder->setInfo($order);
-          //  return ($this->modelOrder->setInfo($order)) ? true: false;
-           // 获取 
+            $order_res = $this->modelOrder->setInfo($order);
             $oid =  $this->modelOrder->getLastInsID();
-           // insert
-
-            // 拼凑order_detail 的 oid
-  
             foreach($order_detail as $k=>$v){
-                // echo $k."=>".$v."<br />"; 
-               
                 $order_detail[$k]['oid'] = $oid;
-        
             }
        
-            
-
-            Db::name('order_detail') -> insertAll($order_detail);
-
-            Db::commit();
-            // commit
+            $detail_res = Db::name('order_detail') -> insertAll($order_detail);
+            if($order_res && $detail_res){
+                
+                Db::commit();
+                $success = true;
+            }
         }catch(\Exception $e){
             // dump($e); 
             Db::rollback();
         }
         
-        
-      
-
-       
-
-
-
-
-
-        
+       return $success;
 
     }
     

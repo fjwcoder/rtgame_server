@@ -22,11 +22,13 @@ class Game extends ApiBase
     // 获取游戏列表
     public function getGameServer($gid = 0){
         $where = ['status'=>1];
+        $where_game = $where;
         if($gid != 0){
             $where['gid'] = $gid;
+            $where_game['id'] = $gid;
         }
         $data = [
-            'game'=>$this->getGameList($where, 'id, cname'),
+            'game'=>$this->getGameList($where_game, 'id, cname'),
             'plantform'=>$this->getGamePlantform($where, 'id, gid, name, area_num'),
             'area'=>$this->getGameArea($where, 'id, gid, pid, name')
         ];

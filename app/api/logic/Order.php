@@ -13,6 +13,7 @@ namespace app\api\logic;
 
 use app\api\error\Common as CommonError;
 use think\Db;
+use getdate;
 /**
  * waiter 模块
  * 
@@ -143,8 +144,62 @@ class Order extends ApiBase
 
         return $this->modelOrder->getList($where, $field, $order, $paginate);
 
-    }
+    }   
+    public function getOrderDetail($param = []){
+        $paginate = false;
+       
+       $decoded_user_token = $param['decoded_user_token'];
+       $where = ['a.user_id'=>$decoded_user_token->user_id];
+       $where['a.order_id'] = $param['order_id'];
+       $where['a.id'] = $param['oid'];
+       $this->modelOrder->alias('a');//设置当前数据表的别名
+ 
+        $field = 'a.id,a.order_id ,v.cname as game_name, j.name as plantform_name, a.area_name,a.game_info ,a.special_info, a.pay_money,a.user_mobile,a.game_account,a.waiter_id,k.nickname as waiter_name,k.headimgurl,a.step,a.status, a.create_time , a.pay_time,a.finish_time';
+        // $order='a.order_id desc';
+       
+        $this->modelOrder->join = [
 
+            [SYS_DB_PREFIX."game_list v", "a.game_id = v.id", "left"],
+            [SYS_DB_PREFIX."game_plantform j", " a.plantform_id = j.id", "left"],
+            [SYS_DB_PREFIX."waiter k", " a.waiter_id = k.id", "left"],
+            
+        ];
+
+
+        $order =  $this->modelOrder->getInfo($where, $field); // 这样查出来是对象，要转成数组
+        
+        if(empty($order)){
+          return CommonError::$getError; //  查询失败;
+        }
+
+        $order = $order->getData(); // 模型的查询结果为对象，需要用这个方法转成数组
+
+
+      
+        $where = [];
+        $where['d.order_id'] = $param['order_id'];
+        $where['d.oid'] = $param['oid'];
+        $field = 'g.name as server_name,d.begin_info,d.end_info,d.server_price,d.server_img';
+        // $order = 'd.oid desc';
+        $this->modelOrderDetail->alias('d');//设置当前数据表的别名
+        
+        $this->modelOrderDetail->join = [
+
+            [SYS_DB_PREFIX."game_server g", "d.server_id = g.id", "left"],
+        
+        ];
+        
+        $detail =  $this->modelOrderDetail->getList($where, $field, 'd.oid desc', $paginate);  // 这样查出来是对象，要转成数组
+        // $details = [];
+        // foreach($detail as $v){
+        //     $details[] = $v->getData();
+        // }
+    //     dump($order); 
+    //   dump($details); die;
+        $order['detail'] = $detail;
+       
+        return $order;
+    }
 
     
 }

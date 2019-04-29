@@ -53,7 +53,7 @@ class Common
     public static $feedbackContentEmpty         = [API_CODE_NAME => 40201, API_MSG_NAME => '反馈内容不可为空'];
     public static $feedbackError                = [API_CODE_NAME => 40202, API_MSG_NAME => '反馈失败'];
 
-
+    public static $getError                = [API_CODE_NAME => 40202, API_MSG_NAME => '获取失败'];
     
     
     

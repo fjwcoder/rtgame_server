@@ -53,6 +53,28 @@ class Order extends ApiBase
 
     }
 
+      /**
+     * create by fjw in 19.3.14
+     * 订单记录
+     * @param user_id: 用户id
+     */
+    public function getOrderDetail(){
+       
+
+        // $decoded_user_token = $this->param['decoded_user_token'];
+        // $where = ['a.user_id'=>$decoded_user_token->user_id];
+       
+             
+        //     // $where['a.oid'] = $this->param['oid'];
+
+        
+        //    $where['a.order_id'] = $this->param['order_id'];
+        //    $where['a.oid'] = $this->param['oid'];
+
+
+        return $this->apiReturn($this->logicOrder->getOrderDetail($this->param));
+        // die;
+    }
 
 
 }

@@ -38,17 +38,17 @@ class Payment extends ApiBase
 
         $res = $this->modelOrder->getInfo([
 
-            'o.order_id'=>$param['order_id'], 'o.id'=>intval($param['oid']), 'o.step'=>0, 'o.status'=>1
+            'o.order_id'=>$param['order_id'], 'o.id'=>intval($param['oid']), 'o.step'=>1, 'o.status'=>1
 
         ], $field);
         
-        if($res['step'] != 1 || $res['status'] != 1){
-            return ['status'=>false, 'msg'=>'该订单不可支付'];
+        if(empty($res)){
+            return CommonError::$returnFalse;
         }
 
         $order = [
 
-            "body"=>'保险支付',
+            "body"=>'代练订单支付',
             "out_trade_no" => $res['order_id'], //$order['order_id'],
             "total_fee" => $res['pay_money'],
             'openid'=>$res['openid']

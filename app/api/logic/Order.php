@@ -26,7 +26,8 @@ class Order extends ApiBase
 
         $decoded_user_token = $param['decoded_user_token'];
         $user_id = $decoded_user_token->user_id;
-
+        $dataArray = json_decode($param['dataArray'], true);
+// dump($dataArray); die; 
         /**
          * 做假数据，测试生成订单
          */
@@ -53,7 +54,7 @@ class Order extends ApiBase
         $pay_money = 0; // 订单总金额
         $order_id = 'GP'.setOrderID(); // 游戏代练订单号
 
-        foreach($param['dataArray'] as $k=>$v){
+        foreach($dataArray as $k=>$v){
             $order_detail[] = [
                 'order_id'=>$order_id,
                 'user_id'=>$user_id,
@@ -79,11 +80,11 @@ class Order extends ApiBase
             'game_password'=>$param['game_password'],
             'game_user'=>$param['game_user'], // 游戏角色名称
             'pay_money' => $pay_money,
-            'game_info' =>  $param['game_info'],
-            'special_info' =>  $param['special_info'],
+            'game_info' =>  isset($param['game_info'])?$param['game_info']:'',
+            'special_info' =>  isset($param['special_info'])?$param['special_info']:'',
             'step' =>  1,
             'waiter_id' =>  0,
-            'create_time' => date('Y-m-d H:i:s', time()),
+            'create_time' => time(),
             'pay_time' =>  '',
             'finish_time' => '',
             'status' =>  1,
@@ -125,7 +126,8 @@ class Order extends ApiBase
 
 
     public function getOrderList($where=[], $field = '', $order='a.order_id desc',$paginate = false){
-        $field = 'a.id,a.order_id ,v.cname as game_name, j.name as plantform_name, a.area_name, a.pay_money, a.step,a.status, a.create_time';
+        $field = 'a.id, a.order_id, v.cname as game_name, j.name as plantform_name, 
+                a.area_name, a.pay_money, a.step, a.status, a.create_time';
         $this->modelOrder->alias('a');//设置当前数据表的别名
 
         $this->modelOrder->join = [

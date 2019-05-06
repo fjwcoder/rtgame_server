@@ -1,0 +1,209 @@
+
+<div class="box">
+    <div class="box-header ">
+
+      <div class="box-tools ">
+          <div class="input-group layui-form input-group-sm search-form">
+                <div class="layui-inline" >
+                    <label class="layui-form-label">进度：</label>
+                    <div class="layui-input-inline" style="width: 100px; margin-top: 4px;">
+                        <select  name="order_step" lay-verify="required">
+                            <option value="0" selected>全部</option>
+                            <option value="1">未支付</option>
+                            <option value="2" >待分配</option>
+                            <option value="3">代练中</option>
+                            <option value="4">已完成</option>
+                            <option value="5">已评价</option>
+                        </select>
+                    </div>
+                </div>
+              
+              <div class="input-group-btn">
+                <button type="button" id="reloadTableBtn"  data-type="reload" class="btn btn-default"><i class="fa fa-search"></i>搜索</button>
+              </div>
+          </div>
+      </div>
+
+      <br/>
+    </div>
+
+    <style>      
+        .layui-table-cell { overflow: visible !important;   } 
+        input.layui-input{
+            height: 30px!important;
+        }
+        .layui-form-select{float: left; width: 190px;}
+        .order-assign-btn{float: right; margin: 4px 0;}
+    </style>
+
+    <div class="box-body table-responsive">
+        <table class="layui-hide" id="test" lay-filter="order_test"></table>
+        <script type="text/html" id="barOrder">
+            
+            <a class="layui-btn order-assign-btn layui-btn-xs" lay-event="assign">确定</a>
+          </script>
+    </div>
+  
+
+  
+  </div>
+
+<script>
+
+    let splitWhere = {};
+    var recordObj = null; // table中记录的对象
+    let waiter = {$waiter_json};
+    var waiterOrder = [];
+
+    layui.use(['table', 'form', 'layer', 'laypage'], function(){
+        var table = layui.table
+        ,layer = layui.layer
+        ,laypage = layui.laypage
+        ,form = layui.form;
+        
+        table.render({
+            elem: '#test'
+            ,id: 'orderTable'
+            ,url:'/admin.php/Order/getOrderList'
+            ,where: splitWhere
+            ,toolbar: true //开启工具栏，此处显示默认图标，可以自定义模板，详见文档
+            ,limit: 15
+            ,cols: [[
+                {field:'id', width:100, title: 'ID', sort: true}
+                ,{field:'order_id', width:200, title: '订单号'}
+                ,{field:'game_name', width:120, title: '游戏名称'}
+                ,{field:'plantform_name', width:120, title: '平台名称'}
+                ,{field:'area_name', title: '区服信息', width: 120}
+                ,{field:'begin_info', minWidth:180, title: '起始信息'}
+                ,{field:'end_info', title: '目标信息', minWidth: 180}
+                ,{field:'pay_money', width:100, title: '订单金额'}
+                ,{field:'create_time', width:180, title: '创建时间', sort: true}
+                ,{field:'status', width:100, title: '状态', templet: function(d){
+                    switch(d.status){
+                        case 1: return '<span style="color: green">正常</span>'; break;
+                        case 2: return '<span style="color: red">取消</span>'; break;
+                        default: return '未知';
+                    }
+                }}
+                ,{fixed: 'right', align: 'center', width:220, title: '订单进度', templet: function(d){
+                    switch(d.step){
+                        case 1: return '<span style="color: red;">未支付</span>'; break;
+                        case 2:
+                            var html = '';
+                            html += '<select id="'+d.order_id+'" lay-verify="" lay-filter="waiterDemo" lay-search="">';
+                            html += '<option value=""></option>';
+                            for(v in waiter){
+                                html += '<option value="' + waiter[v].id + '">' + waiter[v].nickname + '/' + waiter[v].realname + '</option>';
+                            }
+                            html += '</select>';
+                            return html;
+                        break;
+                        case 3: 
+                            return '<span style="color: green;">代练中</span>'; 
+                        break;
+                        default: return '未知';
+                    }
+                }}
+                ,{fixed: 'right', title: '操作', width: 80, align:'center', toolbar: '#barOrder'} //, fixed: 'right'
+            ]]
+
+            ,parseData: function(res){ //将原始数据解析成 table 组件所规定的数据
+                res.code = 0;
+                res.count = res.total;
+            
+            }
+            ,page: true
+        });
+
+        var active = {
+            reload: function(){
+                //执行重载
+                table.reload('orderTable', {
+                    where: splitWhere
+                });
+            }
+        };
+
+        // 搜索按钮
+        $('#reloadTableBtn').on('click', function(){
+            var type = $(this).data('type');
+            splitWhere.step = $('select[name="order_step"]').val();
+            active[type] ? active[type].call(this) : '';
+
+        });
+
+        //监听分配代练人员
+        form.on('select(waiterDemo)', function(obj){
+
+            if(obj.value != "" && obj.value > 0){
+                waiterOrder[obj.elem.id] = obj.value;
+            }else{
+                delete waiterOrder[obj.elem.id];
+            }
+
+        });
+
+        //监听行工具事件
+        table.on('tool(order_test)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+            recordObj = obj;  
+            var data = obj.data //获得当前行数据
+            ,layEvent = obj.event; //获得 lay-event 对应的值
+            // console.log(obj);
+            layer.load();
+            if(layEvent === 'assign'){
+
+                var waiter_id = waiterOrder[data.order_id];
+
+                if(waiter_id == undefined || waiter_id == '' || waiter_id == null){
+                    layer.msg('请选择代练人员');
+                    layer.closeAll('loading');
+                    return false;
+                }else{
+                    layer.confirm('是否确定分配', function(index){
+                        assignWaiter(data.id, data.order_id, waiter_id);
+                    });
+                }
+                
+                
+            } 
+            layer.closeAll('loading');
+        });
+        
+        laypage.render({
+            elem: 'demo3'
+            ,count: 100
+            ,first: '首页'
+            ,last: '尾页'
+            ,prev: '<em>←</em>'
+            ,next: '<em>→</em>'
+        });
+
+        form.render();
+    });
+
+    function assignWaiter(oid, order_id, waiter_id){
+        var postdata = {
+            oid: oid, order_id: order_id, 
+            waiter_id: parseInt(waiter_id)
+        };
+        layer.load();
+        $.ajax({
+            url: '/admin.php/order/assignWaiter',
+            method: 'POST',
+            data: postdata,
+            success: function(res){
+
+                if(res.code === 200){ // 返回失败
+                    recordObj.del();
+                    layer.msg(res.msg);
+                }
+                layer.closeAll('loading');
+            },
+            error: function(e){
+                layer.msg(e);
+                layer.closeAll('loading');
+            }
+        });
+
+    }
+</script>

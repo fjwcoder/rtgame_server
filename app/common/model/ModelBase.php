@@ -183,7 +183,7 @@ class ModelBase extends Model
             $list = $query->select();
             
         } else {
-        
+            
             $list_rows = empty($paginate) ? DB_LIST_ROWS : $paginate;
 
             $list = $query->paginate(input('list_rows', $list_rows), false, ['query' => request()->param()]);

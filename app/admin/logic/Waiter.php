@@ -9,22 +9,18 @@
 // | Repository |   |
 // +---------------------------------------------------------------------+
 
-namespace app\common\model;
-
+namespace app\admin\logic;
 
 /**
  * 
  */
-class Order extends ModelBase
+class Waiter extends AdminBase
 {
 
-    public function assignWaiter($oid, $order_id, $waiter_id, $change=true){
-        $where = ['id'=>$oid, 'order_id'=>$order_id, 'status'=>1];
-        if($change){
-            $where['step'] = 2;
-        }
-        $data = ['step'=>3, 'waiter_id'=>$waiter_id]; 
-        return $this->modelOrder->updateInfo($where, $data);
+    public function getWaiterList($where, $field = '', $order = 'id'){
+
+        return $this->modelWaiter->getList($where, true, $order, false);
     }
-   
+
+
 }

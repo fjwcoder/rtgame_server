@@ -75,6 +75,20 @@ class Order extends ApiBase
         return $this->apiReturn($this->logicOrder->getOrderDetail($this->param));
         // die;
     }
+ /**
+     * create by fjw in 19.3.14
+     * 待抢订单记录
+     * @param user_id: 用户id
+     */
+    public function getHeldOrderList(){
+       
+      
+
+
+
+        return $this->apiReturn($this->logicOrder->getHeldOrderList($this->param));
+
+    }
 
 
 }

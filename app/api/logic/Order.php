@@ -200,6 +200,53 @@ class Order extends ApiBase
        
         return $order;
     }
+/**
+     * create by fjw in 19.3.14
+     * 待抢订单记录
+     */
+     //  order_detail id oid order_id user_id server_id server_price server_img
+     //  order        id order_id  user_id game_id plantform_id area_name user_mobile game_account game_password game_user pay_money game_info 
+     // special_info step waiter_id create_time pay_time finish_time status
 
+
+
+     public function getHeldOrderList($param = []){
+        // dump($param);die;
+        $paginate = 15;
+       
+        $decoded_user_token = $param['decoded_user_token'];
+        $user_id =  $decoded_user_token->user_id;
+        // $waiter_id = 
+  
+        $waiter = $this->modelWaiter->getInfo(['user_id'=>$user_id]);
+        if ($param['waiter_id' ] != $waiter['id']){
+            return CommonError::$getError; //  查询失败;
+
+        }
+
+        $where = [];
+        if (isset($param['gid']) && $param['gid'] != 0){
+            $where['a.game_id'] = $param['gid'];
+        }
+        
+        $order='a.pay_money desc';
+        $this->modelOrder->alias('a');//设置当前数据表的别名
+  
+         $field = 'a.id,a.order_id ,v.cname as game_name, j.name as plantform_name, 
+            a.area_name,a.game_info ,a.special_info, 
+            a.pay_money,a.user_mobile,a.game_account
+            ,a.step,a.status, a.create_time
+        ';
+         // 
+        $this->modelOrder->join = [
+            [SYS_DB_PREFIX."game_list v", "a.game_id = v.id", "left"],
+            [SYS_DB_PREFIX."game_plantform j", " a.plantform_id = j.id", "left"],
+            // [SYS_DB_PREFIX."waiter k", " a.waiter_id = k.id", "left"],
+            
+        ];
+
+        return $this->modelOrder->getList($where, $field, $order, $paginate);
+
+    } 
     
 }

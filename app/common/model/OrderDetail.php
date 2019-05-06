@@ -9,13 +9,14 @@
 // | Repository |   |
 // +---------------------------------------------------------------------+
 
-namespace app\api\model;
+namespace app\common\model;
+
 
 
 /**
  * 
  */
-class OrderDetail extends ApiBase
+class OrderDetail extends ModelBase
 {
    
 

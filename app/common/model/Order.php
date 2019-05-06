@@ -9,13 +9,13 @@
 // | Repository |   |
 // +---------------------------------------------------------------------+
 
-namespace app\api\model;
+namespace app\common\model;
 
 
 /**
  * 
  */
-class Waiter extends ApiBase
+class Order extends ModelBase
 {
    
 

@@ -89,6 +89,12 @@ class Order extends ApiBase
         return $this->apiReturn($this->logicOrder->getHeldOrderList($this->param));
 
     }
-
+/**
+     * 抢单
+     */
+    public function assignWaiter(){
+    
+        return $this->apiReturn($this->logicOrder->assignWaiter($this->param));
+    }
 
 }

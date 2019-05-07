@@ -256,15 +256,15 @@ class Order extends ApiBase
      * 抢单
      */
     public function assignWaiter($param = []){
-     // dump($this->param);die;
-     $oid = $param['oid'];
-     $order_id = $param['order_id'];
-     $decoded_user_token = $param['decoded_user_token'];
-     $user_id =  $decoded_user_token->user_id;
-     $waiter = $this->modelWaiter->getInfo(['user_id'=>$user_id]);
-     $waiter_id = $waiter['id'];
+        // dump($this->param);die;
+        $oid = $param['oid'];
+        $order_id = $param['order_id'];
+        $decoded_user_token = $param['decoded_user_token'];
+        $user_id =  $decoded_user_token->user_id;
+        $waiter = $this->modelWaiter->getInfo(['user_id'=>$user_id]); // add by fjw：查询条件要加上状态status=1
+        // add by fjw: 增加验证：如果该用户不存在，需要返回给前台信息
 
-       
+        $waiter_id = $waiter['id'];
         return $this->modelOrder->assignWaiter($oid, $order_id, $waiter_id);
     }
     

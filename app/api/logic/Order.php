@@ -248,5 +248,21 @@ class Order extends ApiBase
         return $this->modelOrder->getList($where, $field, $order, $paginate);
 
     } 
+
+    /**
+     * 抢单
+     */
+    public function assignWaiter($param = []){
+     // dump($this->param);die;
+     $oid = $param['oid'];
+     $order_id = $param['order_id'];
+     $decoded_user_token = $param['decoded_user_token'];
+     $user_id =  $decoded_user_token->user_id;
+     $waiter = $this->modelWaiter->getInfo(['user_id'=>$user_id]);
+     $waiter_id = $waiter['id'];
+
+       
+        return $this->modelOrder->assignWaiter($oid, $order_id, $waiter_id);
+    }
     
 }

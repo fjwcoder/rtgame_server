@@ -54,7 +54,7 @@ class Common
     public static $feedbackError                = [API_CODE_NAME => 40202, API_MSG_NAME => '反馈失败'];
 
     public static $getError                = [API_CODE_NAME => 40202, API_MSG_NAME => '获取失败'];
-    
+    public static $refuseError                = [API_CODE_NAME => 40202, API_MSG_NAME => '没有权限接受订单'];
     
 
     

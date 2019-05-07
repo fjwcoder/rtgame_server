@@ -261,9 +261,11 @@ class Order extends ApiBase
         $order_id = $param['order_id'];
         $decoded_user_token = $param['decoded_user_token'];
         $user_id =  $decoded_user_token->user_id;
-        $waiter = $this->modelWaiter->getInfo(['user_id'=>$user_id]); // add by fjw：查询条件要加上状态status=1
+        $waiter = $this->modelWaiter->getInfo(['user_id'=>$user_id,'status'=>1]); // add by fjw：查询条件要加上状态status=1
         // add by fjw: 增加验证：如果该用户不存在，需要返回给前台信息
-
+        if(empty($waiter)){
+            return CommonError::$refuseError; //  没有权限接受订单;
+          }
         $waiter_id = $waiter['id'];
         return $this->modelOrder->assignWaiter($oid, $order_id, $waiter_id);
     }

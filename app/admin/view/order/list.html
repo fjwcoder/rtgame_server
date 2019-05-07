@@ -108,8 +108,10 @@
             ]]
 
             ,parseData: function(res){ //将原始数据解析成 table 组件所规定的数据
+                console.log(res);
                 res.code = 0;
                 res.count = res.total;
+
             
             }
             ,page: true
@@ -169,14 +171,14 @@
             layer.closeAll('loading');
         });
         
-        laypage.render({
-            elem: 'demo3'
-            ,count: 100
-            ,first: '首页'
-            ,last: '尾页'
-            ,prev: '<em>←</em>'
-            ,next: '<em>→</em>'
-        });
+        // laypage.render({
+        //     elem: 'demo3'
+        //     ,count: 100
+        //     ,first: '首页'
+        //     ,last: '尾页'
+        //     ,prev: '<em>←</em>'
+        //     ,next: '<em>→</em>'
+        // });
 
         form.render();
     });
@@ -195,8 +197,9 @@
 
                 if(res.code === 200){ // 返回失败
                     recordObj.del();
-                    layer.msg(res.msg);
+                    
                 }
+                layer.msg(res.msg);
                 layer.closeAll('loading');
             },
             error: function(e){

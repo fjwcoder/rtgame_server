@@ -52,13 +52,6 @@ class Order extends AdminBase
 
         $list = $this->logicOrder->getOrderList($where, true, 'id', 15);  //JSON_UNESCAPED_UNICODE
         
-
-        // $list['code'] = 200;
-        // $list['msg'] = '';
-        // $data['code'] = 200;
-        // $data['msg'] = '';
-        // $data['data'] = $list;
-
         return $list;
     }
 

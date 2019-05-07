@@ -1,0 +1,208 @@
+
+<div class="box">
+        <div class="box-header ">
+    
+          <div class="box-tools ">
+              <div class="input-group layui-form input-group-sm search-form">
+                    <div class="layui-inline" >
+                        <label class="layui-form-label">状态：</label>
+                        <div class="layui-input-inline" style="width: 100px; margin-top: 4px;">
+                            <select  name="waiter_status" lay-verify="required">
+                                <option value="" selected>全部</option>
+                                <option value="1">正常</option>
+                                <option value="2" >锁定</option>
+                                <option value="3">申请中</option>
+  
+                            </select>
+                        </div>
+                    </div>
+                  
+                  <div class="input-group-btn">
+                    <button type="button" id="reloadTableBtn"  data-type="reload" class="btn btn-default"><i class="fa fa-search"></i>搜索</button>
+                  </div>
+              </div>
+          </div>
+    
+          <br/>
+        </div>
+    
+        <style>      
+            .layui-table-cell { overflow: visible !important;   } 
+            input.layui-input{
+                height: 30px!important;
+            }
+            .layui-form-select{float: left; width: 190px;}
+            .order-assign-btn{float: right; margin: 4px 2px;}
+        </style>
+    
+        <div class="box-body table-responsive">
+            <table class="layui-hide" id="test" lay-filter="order_test"></table>
+            <!-- <script type="text/html" id="barOrder">
+                
+                <a class="layui-btn layui-btn-primary order-assign-btn layui-btn-xs" lay-event="reject">驳回</a>
+                <a class="layui-btn order-assign-btn layui-btn-xs" lay-event="pass">通过</a>
+              </script> -->
+        </div>
+      
+    
+      
+      </div>
+    
+    <script>
+    
+        let splitWhere = {};
+        var recordObj = null; // table中记录的对象
+    
+        layui.use(['table', 'form', 'layer', 'laypage'], function(){
+            var table = layui.table
+            ,layer = layui.layer
+            ,laypage = layui.laypage
+            ,form = layui.form;
+            
+            table.render({
+                elem: '#test'
+                ,id: 'orderTable'
+                ,url:'/admin.php/Waiter/getWaiterList'
+                ,where: splitWhere
+                ,toolbar: true //开启工具栏，此处显示默认图标，可以自定义模板，详见文档
+                ,limit: 15
+                ,cols: [[
+                    {field:'id', width:100, title: '代练ID', sort: true}
+                    ,{field:'openid', width:260, title: '微信OPENID'}
+                    ,{field:'nickname', width:120, title: '昵称'}
+                    ,{field:'realname', title: '真实姓名', width: 120}
+                    ,{field:'age', width: 80, title: '年龄'}
+                    ,{field:'sex', title: '性别', minWidth: 80, templet: function(d){
+                        switch(d.sex){
+                            case 1: return '男'; break;
+                            case 2: return '女'; break;
+                            default: return '未知';
+                        }
+                    }}
+                    ,{field:'mobile', width:160, title: '联系方式'}
+                    ,{field:'status', fixed: 'right', width:120, title: '状态', align:'center', templet: function(d){
+                        switch(d.status){
+                            case 1: return '<span style="color: green">正常</span>'; break;
+                            case 2: return '<span style="color: red">锁定</span>'; break;
+                            case 3: 
+                                var html = '';
+                                    html += '<a class="layui-btn layui-btn-primary order-assign-btn layui-btn-xs" lay-event="reject">驳回</a>';
+                                    html += '<a class="layui-btn order-assign-btn layui-btn-xs" lay-event="pass">通过</a>';
+                                return html;
+                            break;
+                            default: return '未知';
+                        }
+                    }}
+                    // ,{fixed: 'right', title: '操作', width: 120, align:'center', toolbar: '#barOrder'} //, fixed: 'right'
+                ]]
+    
+                ,parseData: function(res){ //将原始数据解析成 table 组件所规定的数据
+                    console.log(res);
+                    res.code = 0;
+                    res.count = res.total;
+                
+                }
+                ,page: true
+            });
+    
+            var active = {
+                reload: function(){
+                    //执行重载
+                    table.reload('orderTable', {
+                        where: splitWhere
+                    });
+                }
+            };
+    
+            // 搜索按钮
+            $('#reloadTableBtn').on('click', function(){
+                var type = $(this).data('type');
+                splitWhere.status = $('select[name="waiter_status"]').val();
+                active[type] ? active[type].call(this) : '';
+    
+            });
+    
+    
+            //监听行工具事件
+            table.on('tool(order_test)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+                recordObj = obj;  
+                var data = obj.data //获得当前行数据
+                ,layEvent = obj.event; //获得 lay-event 对应的值
+                var waiter_id = data.id;
+                var openid = data.openid;
+                // console.log(data);
+                layer.load();
+                if(layEvent === 'pass'){ // 通过
+    
+                    layer.confirm('是否确定分配', function(index){
+                        passWaiter(waiter_id, openid);
+                    });
+                    
+                }else if(layEvent === 'reject'){
+                    layer.prompt({title: '驳回原因'}, function(val, index){
+                        rejectWaiter(waiter_id, openid, val);
+                        layer.close(index);
+                    });
+                }
+                layer.closeAll('loading');
+            });
+            
+            form.render();
+        });
+    
+        function passWaiter(waiter_id, openid){
+            var postdata = {
+                waiter_id: parseInt(waiter_id),
+                openid: openid
+            };
+            layer.load();
+            $.ajax({
+                url: '/admin.php/waiter/passWaiter',
+                method: 'POST',
+                data: postdata,
+                success: function(res){
+                    console.log(res);
+                    if(res.code === 200){ // 
+                        recordObj.del();
+                        
+                    }
+                    layer.msg(res.msg);
+                    layer.closeAll('loading');
+                },
+                error: function(e){
+                    layer.msg(e);
+                    layer.closeAll('loading');
+                }
+            });
+    
+        }
+
+
+        function rejectWaiter(waiter_id, openid, reasion){
+            var postdata = {
+                waiter_id: parseInt(waiter_id),
+                openid: openid,
+                reasion: reasion
+            };
+            layer.load();
+            $.ajax({
+                url: '/admin.php/waiter/rejectWaiter',
+                method: 'POST',
+                data: postdata,
+                success: function(res){
+                    console.log(res);
+                    if(res.code === 200){ // 
+                        recordObj.del();
+                        
+                    }
+                    layer.msg(res.msg);
+                    layer.closeAll('loading');
+                },
+                error: function(e){
+                    layer.msg(e);
+                    layer.closeAll('loading');
+                }
+            });
+
+        }
+    </script>

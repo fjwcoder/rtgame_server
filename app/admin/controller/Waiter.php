@@ -27,4 +27,46 @@ class Waiter extends AdminBase
         
         return $this->fetch('index');
     }
+
+    public function list()
+    {
+
+
+
+        
+        return $this->fetch('list');
+    }
+
+    public function getWaiterList(){
+        $status = input('status', 0, 'intval');
+        $where = [];
+        if($status !== 0){
+            $where['status'] = $status;
+        }
+
+        $list = $this->logicWaiter->getWaiterList($where, true, 'id desc', 15);  //JSON_UNESCAPED_UNICODE
+        
+        return $list;
+    }
+
+    public function passWaiter(){
+        $waiter_id = input('waiter_id', 0, 'intval');
+        $openid = input('openid');
+        return $this->logicWaiter->passWaiter($waiter_id, $openid);
+        
+    }
+
+    public function rejectWaiter(){
+        $waiter_id = input('waiter_id', 0, 'intval');
+        $openid = input('openid');
+        $reasion = input('reasion');
+        return $this->logicWaiter->rejectWaiter($waiter_id, $openid, $reasion);
+    }
+
+
+
+
+
+
+
 }

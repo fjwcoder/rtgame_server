@@ -149,7 +149,10 @@ class Order extends ApiBase
         $paginate = false;
        
        $decoded_user_token = $param['decoded_user_token'];
-       $where = ['a.user_id'=>$decoded_user_token->user_id];
+    //    $where = ['a.user_id'=>$decoded_user_token->user_id];
+        if(isset($param['step']) && $param['step'] > 0 ){
+            $where['a.step'] = $param['step'];
+        }
        $where['a.order_id'] = $param['order_id'];
        $where['a.id'] = $param['oid'];
        $this->modelOrder->alias('a');//设置当前数据表的别名

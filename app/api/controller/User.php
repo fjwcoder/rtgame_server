@@ -21,6 +21,22 @@ use app\common\controller\ControllerBase;
  */
 class User extends ApiBase
 {
+    /**
+     * create by fjw in 19.5.6
+     * 获取个人中心首页的信息
+     * @param 
+     * @param 
+     * @param 
+     * @param 
+     * @param 
+     * @param 
+     * @param 
+     * @param 
+     */
+    public function getUserIndex(){
+        
+    }
+    
 
 
     /**

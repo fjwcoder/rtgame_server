@@ -221,9 +221,10 @@ class Order extends ApiBase
         $user_id =  $decoded_user_token->user_id;
         // $waiter_id = 
   
-        $waiter = $this->modelWaiter->getInfo(['user_id'=>$user_id]);
-        if ($param['waiter_id' ] != $waiter['id']){
-            return CommonError::$getError; //  查询失败;
+        $waiter = $this->modelWaiter->getInfo(['user_id'=>$user_id, 'status'=>1]);
+
+        if (empty($waiter)){
+            return [API_CODE_NAME => 40202, API_MSG_NAME => '该用户不是代练人员']; 
 
         }
 

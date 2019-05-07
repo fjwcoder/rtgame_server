@@ -48,7 +48,8 @@ class Game extends ApiBase
         if(isset($this->param['gid']) && $this->param['gid'] != 0 && $this->param['gid'] != ''){
             $where_game['id'] = $gid;
         }
-        return $this->apiReturn($this->logicGame->getGameList($where_game));
+
+        return $this->apiReturn($this->logicGame->getGameList($where_game, true));
     }
 
 

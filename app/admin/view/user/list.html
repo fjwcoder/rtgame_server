@@ -1,0 +1,161 @@
+
+<div class="box">
+        <div class="box-header ">
+    
+          <div class="box-tools ">
+              <div class="input-group layui-form input-group-sm search-form">
+                    <div class="layui-inline" >
+                        <label class="layui-form-label">状态：</label>
+                        <div class="layui-input-inline" style="width: 100px; margin-top: 4px;">
+                            <select  name="waiter_status" lay-verify="required">
+                                <option value="" selected>全部</option>
+                                <option value="1">正常</option>
+                                <option value="2" >锁定</option>
+  
+                            </select>
+                        </div>
+                    </div>
+                  
+                  <div class="input-group-btn">
+                    <button type="button" id="reloadTableBtn"  data-type="reload" class="btn btn-default"><i class="fa fa-search"></i>搜索</button>
+                  </div>
+              </div>
+          </div>
+    
+          <br/>
+        </div>
+    
+        <style>      
+            .layui-table-cell { overflow: visible !important;   } 
+            input.layui-input{
+                height: 30px!important;
+            }
+            .layui-form-select{float: left; width: 190px;}
+            .order-assign-btn{float: right; margin: 4px 2px;}
+        </style>
+    
+        <div class="box-body table-responsive">
+            <table class="layui-hide layui-form" id="test" lay-filter="order_test"></table>
+        </div>
+      
+    
+      
+      </div>
+    
+    <script>
+    
+        let splitWhere = {};
+        var recordObj = null; // table中记录的对象
+    
+        layui.use(['table', 'form', 'layer', 'laypage'], function(){
+            var table = layui.table
+            ,layer = layui.layer
+            ,laypage = layui.laypage
+            ,form = layui.form;
+            
+            table.render({
+                elem: '#test'
+                ,id: 'orderTable'
+                ,url:'/admin.php/User/getUserList'
+                ,where: splitWhere
+                ,toolbar: true //开启工具栏，此处显示默认图标，可以自定义模板，详见文档
+                ,limit: 15
+                ,cols: [[
+                    {field:'user_id', width:100, title: '用户ID', sort: true}
+                    ,{field:'openid', width:260, title: '微信OPENID'}
+                    ,{field:'nickname', width:120, title: '昵称'}
+                    // ,{field:'money', title: '余额', width: 120}
+                    // ,{field:'realname', title: '真实姓名', width: 120}
+                    ,{field:'age', width: 80, title: '年龄'}
+                    ,{field:'sex', title: '性别', minWidth: 80, templet: function(d){
+                        switch(d.sex){
+                            case 1: return '男'; break;
+                            case 2: return '女'; break;
+                            default: return '未知';
+                        }
+                    }}
+                    ,{field:'mobile', width:160, title: '联系方式'}
+                    ,{field:'status', fixed: 'right', width:100, title: '状态', align:'center', templet: function(d){
+                        var html = '';
+                        html += '<div class="layui-input-inline">';
+                            html += '<input type="checkbox" user_id="'+d.user_id+'" lay-filter="statuscheckbok" name="status" lay-text="正常|锁定"';
+                            html += ' value= "'+d.status+'" disabled';
+                            if(d.status == 1){
+                                html += ' checked ';
+                            }
+                            html += ' lay-skin="switch">';
+                        html += '</div>';
+                        return html;
+
+                    }}
+                    
+                ]]
+    
+                ,parseData: function(res){ //将原始数据解析成 table 组件所规定的数据
+                    console.log(res);
+                    res.code = 0;
+                    res.count = res.total;
+                
+                }
+                ,page: true
+            });
+    
+            var active = {
+                reload: function(){
+                    //执行重载
+                    table.reload('orderTable', {
+                        where: splitWhere
+                    });
+                }
+            };
+    
+            // 搜索按钮
+            $('#reloadTableBtn').on('click', function(){
+                var type = $(this).data('type');
+                splitWhere.status = $('select[name="waiter_status"]').val();
+                active[type] ? active[type].call(this) : '';
+    
+            });
+            //监听提交
+            form.on('switch(statuscheckbok)', function(data){
+                layer.confirm('是否修改用户状态', function(index){
+                    console.log(index);
+                    // changeStatus(data, this);
+                });
+                
+
+                
+
+                
+            });
+
+            
+            form.render();
+        });
+    
+        function changeStatus(data, elem){
+            var postdata = {
+                    status: data.value
+                };
+                layer.load();
+                $.ajax({
+                    url: '/admin.php/user/changeStatus',
+                    method: 'POST',
+                    data: postdata,
+                    success: function(res){
+                        console.log(res);
+                        if(res.code === 200){ // 
+                            elem.value = (data.value == 1)?2:1;
+                        }
+                        layer.msg(res.msg);
+                        layer.closeAll('loading');
+                    },
+                    error: function(e){
+                        layer.msg(e);
+                        layer.closeAll('loading');
+                    }
+                });
+        }
+
+
+    </script>

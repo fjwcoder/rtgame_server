@@ -39,7 +39,7 @@ class Game extends ApiBase
     public function getGameList($where, $field){
         
         $list = $this->modelGameList->getList($where, $field, 'id', false);
-
+        // dump($list); die;
         return $list;
     }
 

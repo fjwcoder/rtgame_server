@@ -270,4 +270,12 @@ class Order extends ApiBase
         return $this->modelOrder->assignWaiter($oid, $order_id, $waiter_id);
     }
     
+     /**
+     * 抢单
+     */
+    public function waiterAssignOrder($param = []){
+        dump($param);die;
+    
+     
+    }
 }

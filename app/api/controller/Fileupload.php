@@ -18,27 +18,19 @@ use app\common\controller\ControllerBase;
  */
 class Fileupload extends ControllerBase
 {
+    private $finish_folder = 'gamefinish';
     /**
      * create by fjw in 19.4.1
      * 图片上传
      */
-    public function imgUpload(){
+    public function finishImgUpload(){
         $get = request()->get();
         $img = $get['img'];
-        // return $img;
-        // $img = 'idfront';
-        $path_info = ROOT_PATH . 'public' . DS . 'static' . DS . 'upload' . DS . 'picture' . DS . $img;
 
+        $path_info = ROOT_PATH . 'public' . DS . 'static' . DS . 'upload' . DS . $this->finish_folder . DS . $img;
 
-        // try{
-            $file = request()->file($img);
+        $file = request()->file($img);
 
-        //     file_put_contents('up1.txt', var_export($file, true));
-        // }catch(\Exception $e){
-        //     file_put_contents('up1.txt', var_export($e, true));
-        // }
-        // 获取表单上传文件 例如上传了001.jpg
-        // 移动到框架应用根目录/public/uploads/ 目录下
         if($file){
             $info = $file->validate(['ext'=>'jpg,png,jpeg'])->move($path_info); 
             if($info){
@@ -53,7 +45,7 @@ class Fileupload extends ControllerBase
                 // echo $info->getFilename(); 
 // return $savename; 
 
-                return json_encode(['code'=>200, 'path'=> 'static'.DS.'upload'.DS.'picture'.DS.$img.DS.$savename, 'error'=>[]]);
+                return json_encode(['code'=>200, 'path'=> 'static'.DS.'upload'.DS.$this->finish_folder.DS.$img.DS.$savename, 'error'=>[]]);
             }else{
                 // 上传失败获取错误信息
                 return json_encode(['code'=>500, 'path'=>'', 'error'=>$file->getError()]);

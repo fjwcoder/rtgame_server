@@ -19,7 +19,20 @@ use app\api\error\Common as CommonError;
  */
 class Waiter extends ApiBase
 {
-
+    /**
+     * 代练中心
+     */
+    public function waiterIndex($param){
+        $decoded_user_token = $param['decoded_user_token'];
+        $user_id = $decoded_user_token->user_id;
+        $waiter = $this->modelWaiter->getWaiterInfo($user_id, true);
+        if($waiter){
+            return ['waiter_info'=>$waiter];
+        }else{
+            return ['waiter_info'=>['id'=>0]];
+        }
+        
+    }
 
     /**
      * 申请成为代练人员
@@ -70,7 +83,7 @@ class Waiter extends ApiBase
      * 获取接到的代练单
      */
     public function waiterAssignOrder($param = []){
-dump($param);
+// dump($param);
 $paginate = 15;
         $decoded_user_token = $param['decoded_user_token'];
         // dump($decoded_user_token);

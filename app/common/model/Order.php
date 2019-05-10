@@ -29,5 +29,23 @@ class Order extends ModelBase
        
         return $this->modelOrder->updateInfo($where, $data);
     }
+
+    /**
+     * 获取订单状态统计
+     */
+    public function getOrderByStep($user_id){
+        $order = $this->modelOrder->getList(['user_id'=>$user_id, 'status'=>1]);
+        $order_count = [
+            'step_0'=>0, 'step_1'=>0, 'step_2'=>0, 'step_3'=>0, 
+            'step_4'=>0, 'step_5'=>0, 'step_6'=>0, 'step_7'=>0
+
+        ];
+
+        foreach($order as $k=>$v){
+            $order_count['step_'.$v['step']] += 1;
+        }
+
+        return $order_count;
+    }
    
 }

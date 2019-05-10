@@ -200,36 +200,14 @@ class User extends LogicBase
        
         $user_id =  $decoded_user_token->user_id;
        
-        $order = $this->modelOrder->getList(['user_id'=>$user_id]); 
-        $step_1 = 0;//
-        $step_2 = 0;//
-        $step_3 = 0;//
-        $step_4 = 0;//
-        $step_5 = 0;//
-        foreach($order as $k=>$v){
-           if ($v['step'] = 1){
-            $step_1 +=1;
-           }else if($v['step'] = 2){
-            $step_2 +=1;
-           }else if($v['step'] = 3){
-            $step_3 +=1;
-           }else if($v['step'] = 4){
-            $step_4 +=1;
-           }else if($v['step'] = 5){
-            $step_5 +=1;
-        }
-           
-        }
-        $array = [
-            "order_count" =>  ["step_1" => $step_1,
-            "step_2" => $step_2,
-            "step_3" => $step_3,
-            "step_4" => $step_4,
-            "step_5" => $step_5],
-           
-          
+        $order_count = $this->modelOrder->getOrderByStep($user_id);
+        $waiter_info = $this->modelWaiter->getWaiterInfo($user_id);
+        $result = [
+            'order_count'=>$order_count,
+            'waiter_info'=>$waiter_info
         ];
-     return $array;
+        return $result;
+     
 
     }
 

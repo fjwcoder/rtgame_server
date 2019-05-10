@@ -22,13 +22,21 @@ class Waiter extends ApiBase
 {
 
     /**
+     * 加载申请代练时请求
+     */
+    public function waiterIndex(){
+
+        return $this->apiReturn($this->logicWaiter->waiterIndex($this->param));
+    }
+    /**
      * 申请成为代练人员
      */
     public function applyWaiter(){
         
         return $this->apiReturn($this->logicWaiter->applyWaiter($this->param));
     }
-      /**
+    
+    /**
      * 获取接到的代练单
      */
     public function waiterAssignOrder(){

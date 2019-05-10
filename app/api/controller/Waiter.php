@@ -28,6 +28,13 @@ class Waiter extends ApiBase
         
         return $this->apiReturn($this->logicWaiter->applyWaiter($this->param));
     }
+      /**
+     * 获取接到的代练单
+     */
+    public function waiterAssignOrder(){
+        
+        return $this->apiReturn($this->logicWaiter->waiterAssignOrder($this->param));
+    }
 
 
 

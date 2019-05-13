@@ -212,14 +212,15 @@ class Order extends ApiBase
      // special_info step waiter_id create_time pay_time finish_time status
 
 
-
+    /**
+     * 抢单列表: 未分配的列表
+     */
      public function getHeldOrderList($param = []){
         // dump($param);die;
-        $paginate = 15;
        
         $decoded_user_token = $param['decoded_user_token'];
         $user_id =  $decoded_user_token->user_id;
-        // $waiter_id = 
+
   
         $waiter = $this->modelWaiter->getInfo(['user_id'=>$user_id, 'status'=>1]);
 
@@ -228,7 +229,7 @@ class Order extends ApiBase
 
         }
 
-        $where = [];
+        $where = ['a.step'=>2, 'a.status'=>1, 'a.waiter_id'=>0];
         if (isset($param['gid']) && $param['gid'] != 0){
             $where['a.game_id'] = $param['gid'];
         }
@@ -237,7 +238,7 @@ class Order extends ApiBase
         $this->modelOrder->alias('a');//设置当前数据表的别名
   
          $field = 'a.id,a.order_id ,v.cname as game_name, j.name as plantform_name, 
-            a.area_name,a.game_info ,a.special_info, 
+            a.area_name,a.game_info ,a.special_info, a.waiter_id,
             a.pay_money,a.user_mobile,a.game_account
             ,a.step,a.status, a.create_time
         ';
@@ -249,7 +250,7 @@ class Order extends ApiBase
             
         ];
 
-        return $this->modelOrder->getList($where, $field, $order, $paginate);
+        return $this->modelOrder->getList($where, $field, $order, 15);
 
     } 
 

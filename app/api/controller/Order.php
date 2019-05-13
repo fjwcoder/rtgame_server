@@ -77,7 +77,7 @@ class Order extends ApiBase
     }
  /**
      * create by fjw in 19.3.14
-     * 待抢订单记录
+     * 抢单列表：未分配列表
      * @param user_id: 用户id
      */
     public function getHeldOrderList(){

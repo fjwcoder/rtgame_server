@@ -72,37 +72,38 @@ class Waiter extends ApiBase
         return ($this->modelWaiter->setInfo($waiter)) ? true: false;
 
 
-
-
-
-        
-
     }
     
- /**
+    /**
      * 获取接到的代练单
      */
     public function waiterAssignOrder($param = []){
-// dump($param);
-$paginate = 15;
+        // dump($param); die;
+
         $decoded_user_token = $param['decoded_user_token'];
-        // dump($decoded_user_token);
         $user_id = $decoded_user_token->user_id; 
-        $waiter = $this->modelWaiter->getInfo(['user_id'=>$user_id]);
-        $waiter_id = $waiter['id'];
-        $where = [];
-       
-        // $where['step'] = $param['step'];
-        // $where['waiter_id'] = $waiter['id'];
-        $where['step'] = 1;
-        $where['waiter_id'] = 0;
+        $waiter = $this->modelWaiter->getInfo(['user_id'=>$user_id, 'status'=>1]);
+        if(empty($waiter)){
+            return [API_CODE_NAME => 40202, API_MSG_NAME => '获取失败'];
+        }
+        $where = ['a.waiter_id'=>$waiter['id'], 'a.status'=>1];
+
+        if(isset($param['gid']) && $param['gid'] > 0){
+            $where['a.game_id'] = $param['gid'];
+        }
+
+        if(isset($param['step']) && $param['step'] > 2){
+            $where['a.step'] = $param['step'];
+        }else{
+            $where['a.step'] = 3;
+        }
      
         $this->modelOrder->alias('a');//设置当前数据表的别名
   
          $field = 'a.id,a.order_id ,v.cname as game_name, j.name as plantform_name, 
-            a.area_name,a.game_info ,a.special_info, 
-            a.pay_money,a.user_mobile,a.game_account
-            ,a.step,a.status, a.create_time
+            a.area_name,a.game_info, a.special_info, a.waiter_id 
+            ,a.pay_money, a.user_mobile, a.game_account
+            ,a.step, a.status, a.create_time
         ';
          // 
         $this->modelOrder->join = [
@@ -112,7 +113,7 @@ $paginate = 15;
             
         ];
 
-        return $this->modelOrder->getList($where, $field, 'a.create_time desc', $paginate);
+        return $this->modelOrder->getList($where, $field, 'a.create_time desc', 15);
         // return $order;
      
     }

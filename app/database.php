@@ -7,7 +7,7 @@ return [
     // 'hostname'        => '127.0.0.1',  
     'hostname'        => '140.249.17.72', 'password'        => 'ruitong2019',
     // 数据库名
-    'database'        => 'rtgame',
+    'database'        => 'qijian',
     // 用户名
     'username'        => 'root',
     // 密码
@@ -19,9 +19,9 @@ return [
     // 数据库连接参数
     'params'          => [],
     // 数据库编码默认采用utf8
-    'charset'         => 'utf8',
+    'charset'         => 'utf8mb4',
     // 数据库表前缀
-    'prefix'          => 'rtgame_',
+    'prefix'          => 'qijian_',
     // 数据库调试模式
     'debug'           => true,
     // 数据库部署方式:0 集中式(单一服务器),1 分布式(主从服务器)

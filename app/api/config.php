@@ -14,7 +14,10 @@
 empty(STATIC_DOMAIN) ? $static = [] :  $static['__STATIC__'] = STATIC_DOMAIN . SYS_DS_PROS . SYS_STATIC_DIR_NAME;
 
 return [
-    
+    // 应用调试模式
+    'app_debug'              => false,
+    // 应用Trace
+    'app_trace'              => false,
     // 视图输出字符串内容替换
     'view_replace_str' => $static,
     

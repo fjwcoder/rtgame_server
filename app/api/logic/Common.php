@@ -11,6 +11,7 @@
 
 namespace app\api\logic;
 
+use think\Db;
 use app\api\error\CodeBase;
 use app\api\error\Common as CommonError;
 // use \Firebase\JWT\JWT;
@@ -165,7 +166,7 @@ class Common extends ApiBase
      * 微信小程序用户授权、登录
      */
     public function wxappLogin($param = []){
-
+        $success = false;
         // 1. 获取session_key 和 openid
         $wxapp_session = $this->serviceWxapp->driverWxappli->sessionKey($param['code']);
 // dump($wxapp_session); die;
@@ -201,19 +202,46 @@ class Common extends ApiBase
                 'unionid' =>$unionid
             ];
             
-            
-            if(!$this->modelWxUser->setInfo($user)){
+            Db::startTrans();
+            try{
+                // 插入 user 表一条记录
+                $user_data = ['status'=>1, 'money'=>0];
+                if($this->modelUser->setInfo($user_data)){
+                    $last_id = $this->modelUser->getLastInsID();
+                    $user['user_id'] = $last_id;
+                    $subscribe = $this->modelWxUser->setInfo($user);
+                    if($subscribe){
+                        Db::commit();
+                        $success = true;
+                    }else{
+                        Db::rollback();
+                    }
 
-                return CommonError::$loginFail;
+                }else{
+                    Db::rollback();
+                    
+                }
+
+
+            } catch (Exception $ex) {
+                dump($ex);
+                Db::rollback();
 
             }
             
+        }else{
+            $success = true;
         }
 
-        // 3. 生成user_token (3rd_token)
-        $format = wxappReturnUserInfo($user);
+        if($success){
+            // 3. 生成user_token (3rd_token)
+            $format = wxappReturnUserInfo($user);
+                    
+            return tokenSign($format);
+        }else{
+            return CommonError::$loginFail;
+        }
         
-        return tokenSign($format);
 
     }
 

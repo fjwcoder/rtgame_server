@@ -90,7 +90,7 @@ class User extends LogicBase
      * 微信小程序绑定手机号
      */
     public function wxappBindMobile($param = []){
-
+// dump($param);die;
         // 1. 参数不可为空
         // if(empty($data['mobile']) || empty($data['yzm'])){
         if(empty($param['mobile']) ){
@@ -104,7 +104,7 @@ class User extends LogicBase
             return CommonError::$mobileFormatError;
 
         }
-
+        $success = false;
         
 
         // 3. 验证码的问题
@@ -115,68 +115,97 @@ class User extends LogicBase
 
         $decoded_user_token = $param['decoded_user_token'];
         // 4.1 查询该手机号和该app_openid下是否存在用户
-        $wx_user = $this->modelWxUser->getInfo(['app_openid'=>$decoded_user_token->app_openid, 'mobile'=>$param['mobile']]);
-        if($wx_user){
+        $wx_user = $this->modelWxUser->getInfo(['app_openid'=>$decoded_user_token->app_openid]);
+        // dump($wx_user); die;
+        if($wx_user['mobile'] == $param['mobile']){
             return CommonError::$existThisUser;
-        }
-
-        // 4.2 查询user表中是否有该手机号的用户
-        $user = $this->modelUser->getInfo(['mobile'=>$param['mobile'], 'status'=>1]);
-        // $result = [];
-        $success = true;
-        $result_code = CodeBase::$success;
-        Db::startTrans();
-        try{
-            if(empty($user)){ // 不存在，先创建用户；先插入user表，再返回存入wx_user表
-                // 拼凑数据
-                $user_data = [
-                    'mobile'=>$param['mobile'], 'status'=>1
-                ];
-                if($this->modelUser->setInfo($user_data)){ // 插入user表
-                    $user_id = $this->modelUser->getLastInsID();
-                    // 插入成功以后，返回存入wx_user表
-                    $up_res = $this->modelWxUser->updateInfo(
-                        ['app_openid'=>$decoded_user_token->app_openid], 
-                        ['user_id'=>$user_id, 'mobile'=>$param['mobile']]
-                    );
-                    if($up_res){
-                        Db::commit();
-                    }else{
-                        $success = false;
-                        $result_code = CommonError::$bindMobileFail; // 绑定手机号失败
-                    }
-                }else{
-                    $success = false;
-                    $result_code = CommonError::$bindMobileFail; // 绑定手机号失败
-                }
-                
-            }else{
-                $up_res = $this->modelWxUser->updateInfo(
-                    ['app_openid'=>$decoded_user_token->app_openid], 
-                    ['user_id'=>$user['id'], 'mobile'=>$param['mobile']]
-                );
-                if($up_res){
+        }else{
+            // 4.2 fjw rewrite in 19.5.18: 绑定手机号后，直接更新到两个表中
+            Db::startTrans();
+            try{
+                $up_user = $this->modelUser->updateInfo(['id'=>$wx_user['user_id']], ['mobile'=>$param['mobile']]);
+                $up_wx_user = $this->modelWxUser->updateInfo(['app_openid'=>$decoded_user_token->app_openid], ['mobile'=>$param['mobile']]);
+                if($up_user && $up_wx_user){
                     Db::commit();
-                }else{
-                    $success = false;
-                    $result_code = CommonError::$bindMobileFail; // 绑定手机号失败
+                    $success = true;
                 }
-
+            }catch(\Exception $e){
+                dump($e);
+                Db::rollback();
 
             }
-             
-        }catch(\Exception $e){
-            dump($e);
-            Db::rollback();
-            $success = false;
-            $result_code = CommonError::$bindMobileFail; // 绑定手机号失败
         }
+
         if($success){
             $bind_user = $this->modelWxUser->getInfo(['app_openid'=>$decoded_user_token->app_openid], 'user_id, mobile, app_openid, unionid');
             return tokenSign(wxappReturnUserInfo($bind_user));
         }else{
-            return $result_code;
+            return CommonError::$bindMobileFail; // 绑定手机号失败
         }
+
+
+        
+
+
+
+
+        // // 4.2 查询user表中是否有该手机号的用户
+        // $user = $this->modelUser->getInfo(['mobile'=>$param['mobile'], 'status'=>1]);
+        // // $result = [];
+        // $success = true;
+        // $result_code = CodeBase::$success;
+        // Db::startTrans();
+        // try{
+        //     if(empty($user)){ // 不存在，先创建用户；先插入user表，再返回存入wx_user表
+        //         // 拼凑数据
+        //         $user_data = [
+        //             'mobile'=>$param['mobile'], 'status'=>1
+        //         ];
+        //         if($this->modelUser->setInfo($user_data)){ // 插入user表
+        //             $user_id = $this->modelUser->getLastInsID();
+        //             // 插入成功以后，返回存入wx_user表
+        //             $up_res = $this->modelWxUser->updateInfo(
+        //                 ['app_openid'=>$decoded_user_token->app_openid], 
+        //                 ['user_id'=>$user_id, 'mobile'=>$param['mobile']]
+        //             );
+        //             if($up_res){
+        //                 Db::commit();
+        //             }else{
+        //                 $success = false;
+        //                 $result_code = CommonError::$bindMobileFail; // 绑定手机号失败
+        //             }
+        //         }else{
+        //             $success = false;
+        //             $result_code = CommonError::$bindMobileFail; // 绑定手机号失败
+        //         }
+                
+        //     }else{
+        //         $up_res = $this->modelWxUser->updateInfo(
+        //             ['app_openid'=>$decoded_user_token->app_openid], 
+        //             ['user_id'=>$user['id'], 'mobile'=>$param['mobile']]
+        //         );
+        //         if($up_res){
+        //             Db::commit();
+        //         }else{
+        //             $success = false;
+        //             $result_code = CommonError::$bindMobileFail; // 绑定手机号失败
+        //         }
+
+
+        //     }
+             
+        // }catch(\Exception $e){
+        //     dump($e);
+        //     Db::rollback();
+        //     $success = false;
+        //     $result_code = CommonError::$bindMobileFail; // 绑定手机号失败
+        // }
+        // if($success){
+        //     $bind_user = $this->modelWxUser->getInfo(['app_openid'=>$decoded_user_token->app_openid], 'user_id, mobile, app_openid, unionid');
+        //     return tokenSign(wxappReturnUserInfo($bind_user));
+        // }else{
+        //     return $result_code;
+        // }
         
 
     }

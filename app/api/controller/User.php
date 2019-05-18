@@ -34,7 +34,8 @@ class User extends ApiBase
      * @param 
      */
     public function getUserIndex(){
-
+        
+        // dump(config()); die;
         return $this->apiReturn($this->logicUser->getUserIndex($this->param));
 
     }

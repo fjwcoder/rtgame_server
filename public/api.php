@@ -24,6 +24,6 @@ if($_SERVER['REQUEST_METHOD'] == 'OPTIONS'){
     
     exit;
 }
-
+define('APP_DEBUG', false);
 // 加载公共引导文件
 require './public.php';

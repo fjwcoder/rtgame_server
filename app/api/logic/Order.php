@@ -157,7 +157,16 @@ class Order extends ApiBase
        $where['a.id'] = $param['oid'];
        $this->modelOrder->alias('a');//设置当前数据表的别名
  
-        $field = 'a.id,a.order_id ,v.cname as game_name, j.name as plantform_name, a.area_name,a.game_info ,a.special_info, a.pay_money,a.user_mobile,a.game_account,a.waiter_id,k.nickname as waiter_name,k.headimgurl,a.step,a.status, a.create_time , a.pay_time,a.finish_time';
+        $field = 'a.id, a.order_id, 
+            a.area_name, a.game_info, a.special_info, a.pay_money, a.user_mobile,
+            a.game_account, a.waiter_id, a.pay_time,a.finish_time,a.create_time,a.step,a.status
+
+            ,v.cname as game_name, 
+            j.name as plantform_name, 
+
+            k.nickname as waiter_name,
+            k.headimgurl
+            ';
         // $order='a.order_id desc';
        
         $this->modelOrder->join = [
@@ -182,7 +191,7 @@ class Order extends ApiBase
         $where = [];
         $where['d.order_id'] = $param['order_id'];
         $where['d.oid'] = $param['oid'];
-        $field = 'g.name as server_name,d.begin_info,d.end_info,d.server_price,d.server_img';
+        $field = 'g.name as server_name,d.begin_info,d.end_info,d.server_price,d.server_img, d.id as s_id';
         // $order = 'd.oid desc';
         $this->modelOrderDetail->alias('d');//设置当前数据表的别名
         
@@ -273,11 +282,62 @@ class Order extends ApiBase
     }
     
      /**
-     * 抢单
+     * 修改订单状态
+     * @param order_id
+     * @param id
+     * @param step
+     * @param next
      */
-    public function waiterAssignOrder($param = []){
-        dump($param);die;
+    public function changeOrderStep($param = []){
+        $where = ['order_id'=>$param['order_id'], 'id'=>$param['id'], 'step'=>$param['step']];
+        $order = $this->modelOrder->getInfo($where);
+        if($order){
+            $change = $this->modelOrder->updateInfo($where, ['step'=>$param['next']]);
+        }else{
+            return [API_CODE_NAME => 40203, API_MSG_NAME => '订单不存在'];
+        }
     
      
     }
+
+/**
+     * 修改订单状态
+     * @param order_id
+     * @param id
+     * @param status
+     */
+    public function changeOrderStatus($param = []){
+        $where = ['order_id'=>$param['order_id'], 'id'=>$param['id'], 'status'=>$param['status']];
+        $order = $this->modelOrder->getInfo($where);
+        if($order){
+            $status = ($param['status'] == 1)?2:1;
+            $change = $this->modelOrder->updateInfo($where, ['status'=>$status]);
+        }else{
+            return [API_CODE_NAME => 40203, API_MSG_NAME => '订单不存在'];
+        }
+    
+     
+    }
+
+/**
+     * 修改订单状态
+     * @param order_id
+     * @param id
+     * @param s_id
+     * @param server_img
+     */
+    public function saveFinishImg($param = []){
+        $where = ['order_id'=>$param['order_id'], 'id'=>$param['id'], 'step'=>3];
+        $order = $this->modelOrder->getInfo($where);
+        if($order){
+            $change = $this->modelOrderDetail->updateInfo(['oid'=>$param['id'], 'order_id'=>$param['order_id'], 'id'=>$param['s_id']], ['server_img'=>$param['server_img']]);
+        }else{
+            return [API_CODE_NAME => 40203, API_MSG_NAME => '订单不存在'];
+        }
+    
+     
+    }
+
+
+
 }

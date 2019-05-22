@@ -44,7 +44,6 @@ class Fileupload extends ControllerBase
                 $filename = $info->getFilename(); 
                 // echo $info->getFilename(); 
 // return $savename; 
-
                 return json_encode(['code'=>200, 'path'=> 'static'.DS.'upload'.DS.$this->finish_folder.DS.$img.DS.$savename, 'error'=>[]]);
             }else{
                 // 上传失败获取错误信息

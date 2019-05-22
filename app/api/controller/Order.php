@@ -55,7 +55,7 @@ class Order extends ApiBase
 
       /**
      * create by fjw in 19.3.14
-     * 订单记录
+     * 订单详情
      * @param user_id: 用户id
      */
     public function getOrderDetail(){
@@ -83,9 +83,6 @@ class Order extends ApiBase
     public function getHeldOrderList(){
        
       
-
-
-
         return $this->apiReturn($this->logicOrder->getHeldOrderList($this->param));
 
     }
@@ -95,6 +92,27 @@ class Order extends ApiBase
     public function assignWaiter(){
     
         return $this->apiReturn($this->logicOrder->assignWaiter($this->param));
+    }
+
+    /**
+     * 修改订单进度
+     */
+    public function changeOrderStep(){
+        return $this->apiReturn($this->logicOrder->changeOrderStep($this->param));
+    }
+
+    /**
+     * 取消订单
+     */
+    public function changeOrderStatus(){
+        return $this->apiReturn($this->logicOrder->changeOrderStatus($this->param));
+    }
+
+    /**
+     * 保存完成截图
+     */
+    public function saveFinishImg(){
+        return $this->apiReturn($this->logicOrder->saveFinishImg($this->param));
     }
 
    

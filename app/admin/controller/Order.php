@@ -36,6 +36,7 @@ class Order extends AdminBase
     {   
         // 获取代练人员
         $waiter = $this->logicWaiter->getWaiterList(['status'=>1]);
+        // dump($waiter); die;
         $this->assign('waiter', $waiter);
         $this->assign('waiter_json', json_encode($waiter, JSON_UNESCAPED_UNICODE));
 
@@ -50,16 +51,16 @@ class Order extends AdminBase
             $where['step'] = $step;
         }
 
-        $list = $this->logicOrder->getOrderList($where, true, 'id', 15);  //JSON_UNESCAPED_UNICODE
+        $list = $this->logicOrder->getOrderList($where, true, 'id desc', 15);  //JSON_UNESCAPED_UNICODE
         
         return $list;
     }
 
     // 分配代练人员
     public function assignWaiter(){
-        $oid = input('oid', 20, 'intval');
-        $order_id = input('order_id', 'GPI429191776051307');
-        $waiter_id = input('waiter_id', 2, 'intval');
+        $oid = input('oid', 0, 'intval');
+        $order_id = input('order_id', '');
+        $waiter_id = input('waiter_id', 0, 'intval');
         $data = [];
         if($this->logicOrder->assignWaiter($oid, $order_id, $waiter_id)){
             $data['code'] = 200;

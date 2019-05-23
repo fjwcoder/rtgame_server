@@ -21,11 +21,19 @@ class Paynotify extends ControllerBase
 /**
      * 
      */
-    public function wxappInsurancePayNotify(){
+    // public function wxappInsurancePayNotify(){
 
-        return $this->logicPaynotify->wxappInsurancePayNotify();
+    //     return $this->logicPaynotify->wxappInsurancePayNotify();
+
+    // }
+
+    /**
+     * 代练订单支付回调
+     */
+    public function qijianPayNotify(){
+        // echo 'hello'; die;
+        return $this->logicPaynotify->qijianPayNotify();
 
     }
-
 
 }

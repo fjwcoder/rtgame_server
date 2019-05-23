@@ -18,7 +18,8 @@ class Pay extends ServiceBase implements BaseInterface
 {
     
     // const NOTIFY_URL    = 'http://mamiv2.server/api.php/Paynotify/wxappInsurancePayNotify';
-    const NOTIFY_URL    = 'https://wxapp.dxyxshop.com/api.php/Paynotify/wxappInsurancePayNotify';
+    // const NOTIFY_URL    = 'https://wxapp.dxyxshop.com/api.php/Paynotify/wxappInsurancePayNotify';
+    const NOTIFY_URL    = 'http://qijian.fjwcoder.com/api.php/Paynotify/qijianPayNotify';
     const CALLBACK_URL  = 'http://xxx/payment/notify';
     
     /**

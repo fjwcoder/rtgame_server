@@ -145,6 +145,7 @@ class Order extends ApiBase
         return $this->modelOrder->getList($where, $field, $order, $paginate);
 
     }   
+
     public function getOrderDetail($param = []){
         $paginate = false;
        
@@ -159,7 +160,9 @@ class Order extends ApiBase
  
         $field = 'a.id, a.order_id, 
             a.area_name, a.game_info, a.special_info, a.pay_money, a.user_mobile,
-            a.game_account, a.waiter_id, a.pay_time,a.finish_time,a.create_time,a.step,a.status
+            a.game_account, 
+            a.game_password,
+            a.waiter_id, a.pay_time,a.finish_time,a.create_time,a.step,a.status
 
             ,v.cname as game_name, 
             j.name as plantform_name, 
@@ -278,7 +281,12 @@ class Order extends ApiBase
             return CommonError::$refuseError; //  没有权限接受订单;
           }
         $waiter_id = $waiter['id'];
-        return $this->modelOrder->assignWaiter($oid, $order_id, $waiter_id);
+        if($this->modelOrder->assignWaiter($oid, $order_id, $waiter_id)){
+            return true;
+        }else{
+            return [API_CODE_NAME => 40030, API_MSG_NAME => '抢单失败'];
+        }
+        // return $this->modelOrder->assignWaiter($oid, $order_id, $waiter_id);
     }
     
      /**
@@ -293,6 +301,11 @@ class Order extends ApiBase
         $order = $this->modelOrder->getInfo($where);
         if($order){
             $change = $this->modelOrder->updateInfo($where, ['step'=>$param['next']]);
+            if($change){
+                return true;
+            }else{
+                return [API_CODE_NAME => 40203, API_MSG_NAME => '修改失败'];
+            }
         }else{
             return [API_CODE_NAME => 40203, API_MSG_NAME => '订单不存在'];
         }
@@ -312,6 +325,11 @@ class Order extends ApiBase
         if($order){
             $status = ($param['status'] == 1)?2:1;
             $change = $this->modelOrder->updateInfo($where, ['status'=>$status]);
+            if($change){
+                return true;
+            }else{
+                return [API_CODE_NAME => 40203, API_MSG_NAME => '修改失败'];
+            }
         }else{
             return [API_CODE_NAME => 40203, API_MSG_NAME => '订单不存在'];
         }
@@ -320,7 +338,7 @@ class Order extends ApiBase
     }
 
 /**
-     * 修改订单状态
+     * 保存订单完成截图
      * @param order_id
      * @param id
      * @param s_id
@@ -331,6 +349,11 @@ class Order extends ApiBase
         $order = $this->modelOrder->getInfo($where);
         if($order){
             $change = $this->modelOrderDetail->updateInfo(['oid'=>$param['id'], 'order_id'=>$param['order_id'], 'id'=>$param['s_id']], ['server_img'=>$param['server_img']]);
+            if($change){
+                return true;
+            }else{
+                return [API_CODE_NAME => 40203, API_MSG_NAME => '修改失败'];
+            }
         }else{
             return [API_CODE_NAME => 40203, API_MSG_NAME => '订单不存在'];
         }

@@ -88,7 +88,7 @@ class Wxpay extends Pay implements Driver
     public function getWxappPay($order){
         require_once "wxpay/Wxpay.php";
         $wxapp = new \Wxpay($this->config());
-        $order['openid'] = 'oJjvX5XkoCOmXns8xTekLcozz-H8';
+        // $order['openid'] = 'oJjvX5XkoCOmXns8xTekLcozz-H8';
         $order['spbill_create_ip'] = $wxapp->get_client_ip();
         $order['trade_type'] = 'JSAPI';
         $result_data = $wxapp->getPrepay($order);

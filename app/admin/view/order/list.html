@@ -34,9 +34,13 @@
         }
         .layui-form-select{float: left; width: 190px;}
         .order-assign-btn{float: right; margin: 4px 0;}
+        /* .layui-table-box{overflow: visible!important;}
+        .layui-table-body{overflow: visible!important;}
+        .table-responsive{overflow: visible!important;} */
+
     </style>
 
-    <div class="box-body table-responsive">
+    <div class="box-body table-responsive" > 
         <table class="layui-hide" id="test" lay-filter="order_test"></table>
         <script type="text/html" id="barOrder">
             
@@ -53,6 +57,7 @@
     let splitWhere = {};
     var recordObj = null; // table中记录的对象
     let waiter = {$waiter_json};
+    // console.log(waiter);
     var waiterOrder = [];
 
     layui.use(['table', 'form', 'layer', 'laypage'], function(){
@@ -93,6 +98,7 @@
                             html += '<select id="'+d.order_id+'" lay-verify="" lay-filter="waiterDemo" lay-search="">';
                             html += '<option value=""></option>';
                             for(v in waiter){
+                                // console.log(waiter[v]);
                                 html += '<option value="' + waiter[v].id + '">' + waiter[v].nickname + '/' + waiter[v].realname + '</option>';
                             }
                             html += '</select>';
@@ -103,18 +109,22 @@
                         break;
                         default: return '未知';
                     }
+                    form.render();
                 }}
                 ,{fixed: 'right', title: '操作', width: 80, align:'center', toolbar: '#barOrder'} //, fixed: 'right'
             ]]
 
             ,parseData: function(res){ //将原始数据解析成 table 组件所规定的数据
-                console.log(res);
+                // console.log(res);
                 res.code = 0;
                 res.count = res.total;
 
-            
+                form.render();
             }
             ,page: true
+            ,done: function(){
+                form.render();
+            }
         });
 
         var active = {

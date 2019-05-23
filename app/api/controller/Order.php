@@ -39,7 +39,11 @@ class Order extends ApiBase
         // dump($this->param);die;
         $decoded_user_token = $this->param['decoded_user_token'];
         $where = ['a.user_id'=>$decoded_user_token->user_id];
-        $where['a.status'] = isset($this->param['status'])?$this->param['status']:1;
+
+        // $where['a.status'] = isset($this->param['status'])?$this->param['status']:['<', 9];
+        if(isset($this->param['status']) && $this->param['status'] != 0){
+            $where['a.status'] = $this->param['status'];
+        }
         if(isset($this->param['step']) && $this->param['step'] != 0 && $this->param['step'] != ''){ // 订单进度： 1 生成，待支付；2 支付，待分配；3 代练中；4 完成 5，默认0，即获取全部进度的订单
              
             $where['a.step'] = $this->param['step'];

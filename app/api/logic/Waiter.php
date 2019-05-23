@@ -51,6 +51,8 @@ class Waiter extends ApiBase
 
         $user = $this->modelWxUser->getInfo(['user_id'=>$user_id]);
         // dump($user);
+        $mobile = isset($param['mobile'])?$param['mobile']:$user['mobile'];
+        $mobile = empty($mobile)?'':$mobile;
 
         $waiter = [
             
@@ -60,7 +62,7 @@ class Waiter extends ApiBase
             'realname' => $param['realname'],
             'age' => intval($param['age']),
             'sex' => intval($user['sex']),
-            'mobile' => $user['mobile'],
+            'mobile' => $mobile,
             'id_card' => $param['id_card'],
             'headimgurl' =>$user['headimgurl'],
             'game_id_list' =>$param['game_id_list'],

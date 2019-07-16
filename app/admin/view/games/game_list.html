@@ -1,0 +1,179 @@
+
+<div class="box">
+        <div class="box-header ">
+            <a class="btn" href="{:url('addGames')}"><i class="fa fa-plus"></i> 新 增</a>
+          <!-- <div class="box-tools ">
+              <div class="input-group layui-form input-group-sm search-form">
+                    <div class="layui-inline" >
+                        <label class="layui-form-label">状态：</label>
+                        <div class="layui-input-inline" style="width: 100px; margin-top: 4px;">
+                            <select  name="waiter_status" lay-verify="required">
+                                <option value="" selected>全部</option>
+                                <option value="1">正常</option>
+                                <option value="2" >锁定</option>
+                                <option value="3">申请中</option>
+  
+                            </select>
+                        </div>
+                    </div>
+                  
+                  <div class="input-group-btn">
+                    <button type="button" id="reloadTableBtn"  data-type="reload" class="btn btn-default"><i class="fa fa-search"></i>搜索</button>
+                  </div>
+              </div>
+          </div> -->
+    
+          <br/>
+        </div>
+    
+        <style>      
+            .layui-table-cell { overflow: visible !important;   } 
+            input.layui-input{
+                height: 30px!important;
+            }
+            .layui-form-select{float: left; width: 190px;}
+            .order-assign-btn{float: right; margin: 4px 2px;}
+        </style>
+    
+        <div class="box-body table-responsive">
+            <table class="layui-hide" id="test" lay-filter="order_test"></table>
+            <script type="text/html" id="gameEdit">
+                <!-- <a class="layui-btn layui-btn-primary order-assign-btn layui-btn-xs" lay-event="reject">编辑</a> -->
+                <a class="layui-btn layui-btn-xs" lay-event="pass">编辑</a>
+              </script>
+        </div>
+      
+    
+      
+      </div>
+    
+    <script>
+    
+        let splitWhere = {};
+        var recordObj = null; // table中记录的对象
+    
+        layui.use(['table', 'form', 'layer', 'laypage'], function(){
+            var table = layui.table
+            ,layer = layui.layer
+            ,laypage = layui.laypage
+            ,form = layui.form;
+            
+            table.render({
+                elem: '#test'
+                ,id: 'orderTable'
+                ,url:'/admin.php/Games/getGameList'
+                ,where: splitWhere
+                ,toolbar: true //开启工具栏，此处显示默认图标，可以自定义模板，详见文档
+                ,limit: 15
+                ,cols: [[
+                    {field:'id', width:100, title: '游戏ID', sort: true}
+                    ,{field:'cname', width:120, title: '中文名称'}
+                    ,{field:'ename', width:260, title: '英文名称'}
+                    ,{field:'headimgurl', width:120, title: '缩略图'}
+                    ,{field:'hot', title: '热度', width: 120}
+                    ,{field:'status', fixed: 'right', width:120, title: '状态', align:'center', templet: function(d){
+                        switch(d.status){
+                            case 1: return '<span style="color: green">显示</span>'; break;
+                            case 2: return '<span style="color: red">不显示</span>'; break;
+                            default: return '未知';
+                        }
+                    }}
+                    ,{fixed: 'right', title: '操作',  align:'center', toolbar: '#gameEdit'} //, fixed: 'right'
+                ]]
+    
+                ,parseData: function(res){ //将原始数据解析成 table 组件所规定的数据
+                    // console.log(res);
+                    res.code = 0;
+                    res.count = res.total;
+                
+                }
+                ,page: true
+            });
+    
+            var active = {
+                reload: function(){
+                    //执行重载
+                    table.reload('orderTable', {
+                        where: splitWhere
+                    });
+                }
+            };
+    
+            // 搜索按钮
+            $('#reloadTableBtn').on('click', function(){
+                var type = $(this).data('type');
+                splitWhere.status = $('select[name="waiter_status"]').val();
+                active[type] ? active[type].call(this) : '';
+    
+            });
+    
+    
+            //监听行工具事件
+            table.on('tool(order_test)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+                recordObj = obj; 
+                var game_id = obj.data.id;
+                // console.log(game_id);
+                // layer.load();
+                window.location.href="{:url('editGames')}?id="+game_id;
+                // layer.closeAll('loading');
+            });
+            
+            form.render();
+        });
+    
+        function passWaiter(waiter_id, openid){
+            var postdata = {
+                waiter_id: parseInt(waiter_id),
+                openid: openid
+            };
+            layer.load();
+            $.ajax({
+                url: '/admin.php/waiter/passWaiter',
+                method: 'POST',
+                data: postdata,
+                success: function(res){
+                    console.log(res);
+                    if(res.code === 200){ // 
+                        recordObj.del();
+                        
+                    }
+                    layer.msg(res.msg);
+                    layer.closeAll('loading');
+                },
+                error: function(e){
+                    layer.msg(e);
+                    layer.closeAll('loading');
+                }
+            });
+    
+        }
+
+
+        function rejectWaiter(waiter_id, openid, reasion){
+            var postdata = {
+                waiter_id: parseInt(waiter_id),
+                openid: openid,
+                reasion: reasion
+            };
+            layer.load();
+            $.ajax({
+                url: '/admin.php/waiter/rejectWaiter',
+                method: 'POST',
+                data: postdata,
+                success: function(res){
+                    console.log(res);
+                    if(res.code === 200){ // 
+                        recordObj.del();
+                        
+                    }
+                    layer.msg(res.msg);
+                    layer.closeAll('loading');
+                },
+                error: function(e){
+                    layer.msg(e);
+                    layer.closeAll('loading');
+                }
+            });
+
+        }
+    </script>

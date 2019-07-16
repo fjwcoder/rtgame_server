@@ -119,5 +119,37 @@ class Order extends ApiBase
         return $this->apiReturn($this->logicOrder->saveFinishImg($this->param));
     }
 
+    /**
+     * 小程序首页订单列表 只显示 已付钱-没有代练的 优先显示待接单的订单
+     * FengQiMan 2019-07-16
+     * 已支付-未接单 step=2
+     */
+    public function getIndexOrder()
+    {
+        return $this->apiReturn($this->logicOrder->getIndexOrder());
+    }
+
+   /**
+    * @Author: FengQiMan
+    * @Descripttion: 接单大厅订单列表 各游戏下订单列表
+    * @Date: 2019-07-16 10:24:24
+    */ 
+    public function hallGOrderList()
+    {
+        return $this->apiReturn($this->logicOrder->hallGOrderList($this->param));
+    }
+
+    /**
+     * @Author: FengQiMan
+     * @Descripttion: 查看未接单订单详情 返回订单信息 当前用户权限
+     * @param {type} 
+     * @Date: 2019-07-16 16:14:21
+     */
+    public function getGOrderDetail()
+    {
+        return $this->apiReturn($this->logicOrder->getGOrderDetail($this->param));
+    }
+    
+
    
 }

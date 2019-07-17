@@ -420,7 +420,7 @@ class Order extends ApiBase
         ];
         $this->modelOrder->alias('a');
 
-        $field = 'a.id, a.order_id, a.game_id, d.begin_info, d.end_info, d.server_price, v.cname';
+        $field = 'a.id, a.order_id, a.game_id, d.begin_info, d.end_info, d.server_price, v.cname as game_name';
 
         $this->modelOrder->join = [
             [SYS_DB_PREFIX."game_list v", "a.game_id = v.id", "left"],
@@ -428,7 +428,7 @@ class Order extends ApiBase
         ];
         $this->modelOrder->limit = 10;
 
-        $order = 'a.pay_money desc';
+        $order = 'a.create_time desc';
         
         $data['order'] = $this->modelOrder->getList($where,$field,$order,false);
         
@@ -464,13 +464,13 @@ class Order extends ApiBase
         ];
 
         $this->modelRobotOrder->alias('b');
-        $field_r = 'b.id, b.order_id, b.game_id, r.begin_info, r.end_info, r.server_price, v.cname';
+        $field_r = 'b.id, b.order_id, b.game_id, r.begin_info, r.end_info, r.server_price, v.cname as game_name';
         $this->modelRobotOrder->join = [
             [SYS_DB_PREFIX."game_list v", "b.game_id = v.id", "left"],
             [SYS_DB_PREFIX."robot_order_detail r", "b.id = r.oid", "left"]
         ];
 
-        $order_r = 'b.pay_money desc';
+        $order_r = 'b.create_time desc';
 
         $data['rorder'] = $this->modelRobotOrder->getList($where_r,$field_r,$order_r,false);
 
@@ -508,7 +508,7 @@ class Order extends ApiBase
             [SYS_DB_PREFIX."order_detail d", "a.id = d.oid", "left"]
         ];
 
-        $order = 'a.pay_money desc';
+        $order = 'a.create_time desc';//按订单创建时间排序 最新最靠前
         
         return $this->modelOrder->getList($where,$field,$order,10);
         
@@ -521,20 +521,25 @@ class Order extends ApiBase
      * @Date: 2019-07-16 16:13:05
      */
     public function getGOrderDetail($param = []){
-        $oid = $param['oid'];
-        $order_id = $param['order_id'];
-        $decoded_user_token = $param['decoded_user_token'];
-        $user_id =  $decoded_user_token->user_id;
+        // $oid = $param['oid'];
+        // $order_id = $param['order_id'];
+        // $decoded_user_token = $param['user_token'];
+        $oid = 1;
+        $order_id = 'GPI524905158106024';
+        // $decoded_user_token = $param['user_token'];
+        // $user_id =  $decoded_user_token->user_id;
+        $user_id =  100;
         // 当前用户信息 可以接单的游戏列表 状态
         // $this->modelWaiter->alias('w');
         $where_w = [
             'user_id' => $user_id,
         ];
         $waiter = $this->modelWaiter->getInfo($where_w,'id,user_id,game_id_list,status');
-        if(empty($waiter)){
-            return CommonError::$refuseError; //  没有权限接受订单;
-        }
-        $waiter_id = $waiter['id'];
+        // if(empty($waiter)){
+        //     return CommonError::$refuseError; //  没有权限接受订单;
+        // }
+        // dd($waiter);
+        // $waiter_id = $waiter['id'];
         // 当前订单的信息
         $this->modelOrder->alias('a');
         $where = [
@@ -548,7 +553,8 @@ class Order extends ApiBase
         $field = 'a.id,a.order_id,a.user_id,v.cname as game_cname,a.plantform_id,a.area_name,a.user_mobile,a.pay_money,a.game_info,a.step,a.status,a.order_type,d.begin_info,d.end_info,d.server_price,d.server_img,d.server_type,d.server_con';
 
         $order = $this->modelOrder->getInfo($where,$field);
-        if($waiter && $order){
+        // if($waiter && $order){
+        if($order){
             $data['waiter'] = $waiter;
             $data['order'] = $order;
             return $data;

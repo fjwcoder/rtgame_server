@@ -983,3 +983,12 @@ function createPHPQrcode($url='地址为空', $is_logo=false){
     // }
     
 }
+
+    // 2019-07-17 fqm
+    // 传一组以英文逗号隔开的数，返回一个随机数
+    function rRomdomD($data = ''){
+        $list = explode(",", $data);
+        $cmax = count($list) - 1;
+        $randnum = mt_rand(0, $cmax);
+        return $list[$randnum];
+    }

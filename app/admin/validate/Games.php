@@ -16,7 +16,7 @@ class Games extends AdminBase
         'cname'  => 'require|chsDash|unique:game_list',
         'ename'  => 'require|chsDash|unique:game_list',
         'hot'   => 'number',
-        'status'   => 'require|in:0,1'
+        'status'   => 'require|in:1,2'
     ];
 
     // 验证提示

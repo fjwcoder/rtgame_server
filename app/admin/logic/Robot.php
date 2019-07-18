@@ -37,14 +37,12 @@ class Robot extends AdminBase
             return ['code'=>400,'msg'=>'请输入正确的正整数'];
         }
         $num = (int)$data['num'];// 添加的数量
-        // dd($games_ids);
-        // $games_ids = implode(',',$games_ids);
-        // dd($games_ids);
+
         if($data['type'] == 1){
             // return ['code'=>200,'msg'=>'代练'];
             for ($i=0; $i < $num; $i++) { 
                 // 随机数据
-                $order_info = $this->rRandomData();
+                $order_info = $this->rRandomData($data['type']);
                 // dd($order_info);
                 $order_id = 'GP'.setOrderID(); // 游戏代练订单号
                 $res[$i] = [
@@ -54,7 +52,7 @@ class Robot extends AdminBase
                     'game_id'       =>  $order_info['game_id'],
                     'plantform_id'  =>  $order_info['game_info']['plantform_id'],
                     'area_name'     =>  $order_info['game_info']['area_name'],
-                    'user_mobile'   =>  $order_info['user_mobile'],
+                    'user_mobile'   =>  createMobile(),
                     'game_account'  =>  $order_info['game_account'],
                     'game_password' =>  $order_info['game_password'],
                     'game_user'     =>  $order_info['game_user'], // 游戏角色名称
@@ -90,22 +88,82 @@ class Robot extends AdminBase
                 }
                 $addD = Db::name('robot_order_detail')->insertAll($dres);
 
-                if($add && $addD){ Db::commit(); }
+                if($add && $addD){ 
+                    Db::commit(); 
+                    return ['code'=>200,'msg'=>'创建成功'];
+                }
             }catch(\Exception $e){
                 // dump($e); 
                 Db::rollback();
+                return ['code'=>200,'msg'=>'创建失败'];
             }
-            return ['code'=>200,'msg'=>'创建成功'];
+            
         }else{
-            return ['code'=>200,'msg'=>'陪玩'];
-            for ($i=0; $i < $data['num']; $i++) { 
-                
+            // return ['code'=>200,'msg'=>'陪玩'];
+            for ($i=0; $i < $num; $i++) { 
+                // 随机数据
+                $order_info = $this->getHPCountPrice();
+                $order_id = 'GP'.setOrderID(); // 游戏代练订单号
+                $res[$i] = [
+                    'order_id'      =>  $order_id,
+                    // 虚假数据
+                    'user_id'       =>  $order_info['user_id'],
+                    'game_id'       =>  $order_info['game_id'],
+                    'plantform_id'  =>  $order_info['plantform_id'],
+                    // 'area_name'     =>  $order_info['game_info']['area_name'],
+                    'user_mobile'   =>  createMobile(),
+                    // 'game_account'  =>  $order_info['game_account'],
+                    // 'game_password' =>  $order_info['game_password'],
+                    // 'game_user'     =>  $order_info['game_user'], // 游戏角色名称
+                    'pay_money'     =>  $order_info['server_price'],
+                    // 'game_info'     =>  $order_info['game_info']['game_info'],
+                    'special_info'  =>  $order_info['special_info'],
+                    // 'server_id'     =>  $order_info['game_info']['server_id'],
+                    'step'          =>  $order_info['step'],
+                    'waiter_id'     =>  $order_info['waiter_id'],
+                    'create_time'   =>  $order_info['create_time'],
+                    'pay_time'      =>  $order_info['pay_time'],
+                    'finish_time'   =>  '',
+                    'status'        =>  1,
+                    'order_type'    =>  $data['type'],
+                ];
+                $dres[$i] = [
+                    'order_id'      =>  $order_id,
+                    'user_id'       =>  $order_info['user_id'],
+                    // 'server_id'     =>  $order_info['game_info']['server_id'],
+                    // 'begin_info'    =>  $order_info['game_info']['begin_info'],
+                    // 'end_info'      =>  $order_info['game_info']['end_info'],
+                    'server_price'  =>  $order_info['server_price'],
+                    'server_type'  =>  $order_info['server_type'],
+                    'server_con'  =>  $order_info['server_con'],
+                    'server_img'    =>  '',
+                ];
             }
+            Db::startTrans();
+            try{
+                $add = Db::name('robot_order')->insertAll($res);
+                $oids = Db::name('robot_order')->limit($add)->order('id desc')->column('id');
+                sort($oids);
+                foreach($dres as $k => $v){
+                    $dres[$k]['oid'] = $oids[$k];
+                }
+                $addD = Db::name('robot_order_detail')->insertAll($dres);
+
+                if($add && $addD){ 
+                    Db::commit(); 
+                    return ['code'=>200,'msg'=>'创建成功'];
+                }
+            }catch(\Exception $e){
+                // dump($e); 
+                Db::rollback();
+                return ['code'=>400,'msg'=>'创建失败'];
+            }
+            
 
         }
     }
 
-    // 2019-07-17 FengQiMan 机器人随机数据
+    // 2019-07-17 FengQiMan 机器人随机数据 - 代练
     public function rRandomData()
     {
         //用户id usei_id
@@ -116,10 +174,6 @@ class Robot extends AdminBase
 
         // 根据游戏类型 判断英雄 段位 等信息
         $order_info = $this->getHeroDInfo($game_id);
-        // dd($order_info);
-        // 手机号 user_mobile
-        $mobiles = array(130,131,132,133,134,135,136,137,138,139,144,147,150,151,152,153,155,156,157,158,159,176,177,178,180,181,182,183,184,185,186,187,188,189);
-        $user_mobile = $mobiles[array_rand($mobiles)].mt_rand(1000,9999).mt_rand(1000,9999);
 
         // 游戏账号 game_account 随机生成8-10位账号
         $game_account = mt_rand(1000,99999).mt_rand(1000,99999);
@@ -152,7 +206,6 @@ class Robot extends AdminBase
         $data = [
             'user_id' => $user_id,
             'game_id' => $game_id,
-            'user_mobile' => $user_mobile,
             'game_account' => $game_account,
             'game_password' => $game_password,
             'game_user' => $game_user,
@@ -165,7 +218,7 @@ class Robot extends AdminBase
         return $data;
     }
 
-    // 2019-07-17 fqm  根据游戏类型 判断英雄 段位 等信息
+    // 2019-07-17 FengQiMan  根据游戏类型 判断英雄 段位 等信息 - 代练
     public function getHeroDInfo($game_id = 0)
     {
         // 服务id plantform_id
@@ -200,6 +253,11 @@ class Robot extends AdminBase
             $q_f = mt_rand(1,200);
             $area_name = '第'.$q_f.'区';
             $benginEnd = $this->getWZCountPrice($game_id);
+            // 指定英雄加价 百分之三十
+            if($zd_yx != ''){
+                // $money_t = floatval($benginEnd['server_price'] + ($benginEnd['server_price']*0.3));
+                $benginEnd['server_price'] = floatval($benginEnd['server_price'] + ($benginEnd['server_price']*0.3));
+            }
         }elseif($game_id == 2){
             // 平台id
             $plantform_id = rRomdomD('5,6,7,8');
@@ -235,14 +293,15 @@ class Robot extends AdminBase
         return $data;
     }
 
-    // 2019-07-17 fqm 英雄联盟 区服 
-    public function getGameArea($pid = 0){
+    // 2019-07-17 FengQiMan 英雄联盟 区服  - 代练
+    public function getGameArea($pid = 0)
+    {
         $data = Db::name('game_area')->where(['pid'=>$pid])->column('name');
         $res = implode(',',$data);
         return rRomdomD($res);
     }
     
-    // 2019-07-17 fqm 英雄联盟生成段位选择数据 并计算价格
+    // 2019-07-17 FengQiMan 英雄联盟生成段位选择数据 并计算价格 - 代练
     public function getYXCountPrice()
     {
         $total_level = 1;
@@ -337,9 +396,9 @@ class Robot extends AdminBase
 
         $server_price = 0; // 价格
 
-        $num = $end_id - $arrId;
-
-        for ($i=0; $i < $num; $i++) { 
+        $num_i = $end_id - $arrId;
+        
+        for ($i=0; $i < $num_i; $i++) { 
             $server_price += $level_list[$arrId]['level_price'];
             $arrId++;
         }
@@ -353,10 +412,10 @@ class Robot extends AdminBase
         
     }
 
-    // 2019-07-17 fqm 王者荣耀生成段位选择数据 并计算价格 (未完成)
+    // 2019-07-17 FengQiMan 王者荣耀生成段位选择数据 并计算价格 - 代练
     public function getWZCountPrice()
     {
-        $level_list = []; // 段位数组，包含：名称（name），当前段位共获得的星数（stars），价格分级对应的层级（star_level）
+        $level_list = []; // 段位数组，包含：名称（name），当前段位共获得的星数（stars），价格分级对应的层级（star_level）,单价star_price
         $name_list = []; //  放到picker里显示
         $star = 1;
         $king_star = 0;
@@ -372,77 +431,92 @@ class Robot extends AdminBase
                 'name'=>'倔强青铜',
                 'level'=>3,
                 'star'=>3,
-                'star_level'=>1
+                'star_level'=>1,
+                "star_price" => 1
             ],
             1 => [
                 'name'=>'秩序白银',
                 'level'=>3,
                 'star'=>3,
-                'star_level'=>1
+                'star_level'=>1,
+                "star_price" => 1
             ],
             2 => [
                 'name'=>'荣耀黄金',
                 'level'=>4,
                 'star'=>4,
-                'star_level'=>2
+                'star_level'=>2,
+                "star_price" => 2
             ],
             3 => [
                 'name'=>'尊贵铂金',
                 'level'=>4,
                 'star'=>4,
-                'star_level'=>3
+                'star_level'=>3,
+                "star_price" => 3
             ],
             4 => [
                 'name'=>'永恒钻石',
                 'level'=>5,
                 'star'=>5,
-                'star_level'=>4
+                'star_level'=>4,
+                "star_price" => 5
             ],
             5 => [
                 'name'=>'至尊星耀',
                 'level'=>5,
                 'star'=>5,
-                'star_level'=>5
+                'star_level'=>5,
+                "star_price" => 6
             ],
             6 => [
                 'name'=>'王者1-10星',
                 'level'=>1,
                 'star'=>10,
-                'star_level'=>6
+                'star_level'=>6,
+                "star_price" => 7
             ],
             7 => [
                 'name'=>'王者11-20星',
                 'level'=>1,
                 'star'=>10,
-                'star_level'=>7
+                'star_level'=>7,
+                "star_price" => 8
             ],
             8 => [
                 'name'=>'王者21-30星',
                 'level'=>1,
                 'star'=>10,
-                'star_level'=>8
+                'star_level'=>8,
+                "star_price" => 13
             ],
             9 => [
                 'name'=>'王者31-40星',
                 'level'=>1,
                 'star'=>10,
-                'star_level'=>9
+                'star_level'=>9,
+                "star_price" => 15
             ],
             10 => [
                 'name'=>'王者41-50星',
                 'level'=>1,
                 'star'=>10,
-                'star_level'=>10
+                'star_level'=>10,
+                "star_price" => 18
             ],
             11 => [
                 'name'=>'王者50星以上',
                 'level'=>1,
                 'star'=>100,
-                'star_level'=>11
+                'star_level'=>11,
+                "star_price" => 25
             ],
         ];
 
+        $ks = [];
+        $num = 0;
         foreach ($level_name as $k => $v) {
+            $ks[$k] = $k;
             if($k < 6){
                 // $k = $big_num[$k];
                 for ($i = $level_name[$k]["level"]; $i > 0; $i--) {
@@ -453,13 +527,14 @@ class Robot extends AdminBase
                         $temp = [
                             "name"=> $name,
                             'stars'=> $star,
-                            'star_level'=> $level_name[$k]["star_level"]
+                            'star_level'=> $level_name[$k]["star_level"],
+                            'star_price'=>$level_name[$k]["star_price"]
                         ];
                         $level_list[] = array_push($level_list,$temp);
                         $star++;
-                        // dd($level_list);
+                        $num++;
                     }
-                  }
+                }
                 
             }else{
                 for ($i = 0; $i < $level_name[$k]["star"]; $i++) {
@@ -469,20 +544,99 @@ class Robot extends AdminBase
                     $temp = [
                         "name"=> $name,
                         'stars'=> $star,
-                        'star_level'=> $level_name[$k]["star_level"]
+                        'star_level'=> $level_name[$k]["star_level"],
+                        'star_price'=>$level_name[$k]["star_price"]
                     ];
                     $level_list[] = array_push($level_list,$temp);
                     $star++;
+                    $num++;
                 }
-            # code...
+                
             }
-            dd($level_list);
+            
+        }
+        
+        // 将 $level_list 删除无用数据 并设置下标从 0 开始
+        $level_list = array_values(array_filter($level_list, function($var) { return(!($var & 1)); },  ARRAY_FILTER_USE_KEY));
+        // dd($level_list);
+        $arrId = array_rand($level_list);
+        
+        // 确保开始段位不是最后一个
+        if($arrId >= 100){ $arrId -= 50; }
+        // 开始段位信息
+        $begin_info = $level_list[$arrId];
+        // 确保结束段位不在开始段位之前 不和开始段位相同
+        $end_id = $arrId + intval((($num - 5) - $arrId)/2);
+        if($end_id == $arrId){$end_id = $end_id + 1;}
+        // 结束段位信息
+        // $end_id = 20;
+        $end_info = $level_list[$end_id];
+
+        $server_price = 0; // 价格
+
+        $num_i = $end_id - $arrId;
+        
+        for ($i=0; $i < $num_i; $i++) { 
+            $arrId++;
+            $server_price += $level_list[$arrId]['star_price'];
         }
 
+        $data = [
+            'begin_info' => $begin_info['name'],
+            'end_info' => $end_info['name'],
+            'server_price' => $server_price
+        ];
+        // d($data);
+        return $data;
 
 
+    }
 
+    // 2019-07-18 FengQiMan 和平精英生成数据 价格 时间等 - 陪玩
+    public function getHPCountPrice()
+    {
+        //用户id usei_id
+        $user_id = mt_rand('8888','9999');
+        // 游戏id game_id
+        $game_id = 4;//rRomdomD('1,2');//和平精英的ID
+        // 区服 plantform_id
+        $plantform_id = rRomdomD('9,10,11,12');
 
+        // 特殊说明 special_info
+        $special_info = '';
+
+        // 创建时间 create_time
+        $create_time = time() - mt_rand(300,9999);
+
+        // 支付时间 pay_time
+        $pay_time = $create_time + mt_rand(100,300);
+        // 支付金额 server_price
+        $server_price = 0;
+
+        $server_type = rRomdomD('1,2');// 服务类型 1：按时间 2按局数
+        $server_con = mt_rand(1,10);// n 小时 或 n 局
+
+        if($server_type == 1){
+            $server_price = $server_con * 5; // 一小时五元
+        }elseif($server_type == 2){
+            $server_price = $server_con * 3; // 一局三元
+        }
+        $data = [
+            'user_id'       =>  $user_id,
+            'game_id'       =>  $game_id,
+            'plantform_id'  =>  $plantform_id,
+            'special_info'  =>  $special_info,
+            'create_time'   =>  $create_time,
+            'pay_time'      =>  $pay_time,
+            'server_price'  =>  $server_price,
+            'server_type'   =>  $server_type,
+            'server_con'    =>  $server_con,
+            'waiter_id'     =>  0,
+            'step'          =>  2,
+        ];
+
+        return $data;
+        
 
     }
 

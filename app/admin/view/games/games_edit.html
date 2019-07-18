@@ -1,0 +1,68 @@
+<form action="{:url()}" method="post" class="form_single">
+    <div class="box">
+      <div class="box-body">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>游戏中文名称</label>
+              <!-- <span>（用户名会作为默认的昵称）</span> -->
+              <input class="form-control" name="cname" placeholder="请输入中文名称" type="text" value="{$game_info['cname']}">
+            </div>
+          </div>
+ 
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>游戏英文名称</label>
+              <!-- <span>（用户密码不能少于6位）</span> -->
+              <input class="form-control" name="ename" placeholder="请输入英文名称" type="text" value="{$game_info['ename']}">
+            </div>
+          </div>
+ 
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>热度</label>
+              <!-- <span>（确认密码需要和密码一致）</span> -->
+              <input class="form-control" name="hot" placeholder="请输入热度" type="text" value="{$game_info['hot']}">
+            </div>
+          </div>
+ 
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>缩略图</label>
+              <!-- <span>（用户邮箱，用于找回密码等安全操作）</span> -->
+              {assign name="img_file" value="$game_info['headimgurl']|default='0'" /}
+
+              {:widget('file/index', ['name' => 'headimgurl', 'value' => $img_file, 'type' => 'file'])}
+              
+              {notempty name="img_file"}
+                  <div class="upload-pre-file">
+                      {assign name="img_file" value="$img_file|get_picture_url" /}
+                      <a target="_blank" href="{$img_file}">
+                          <img src="{$img_file}">
+                          {$img_file}
+                      </a>
+                  </div>
+              {/notempty}
+              <!-- {:widget('file/index', ['name' => 'headimgurl', 'value' => '', 'type' => 'img'])} -->
+            </div>
+          </div>
+            
+          <div class="col-md-6">
+            <div class="form-group">
+                <label>状态</label>
+                <span>（是否显示，默认是，显示）</span>
+                <div>
+                    <label class="margin-r-5"><input type="radio" name="status" value="1" {if condition="$game_info['status'] == 1"} checked="checked"{/if}> 显示</label>
+                    <label><input type="radio" name="status" value="2" {if condition="$game_info['status'] == 2"} checked="checked"{/if}> 不显示</label>
+                </div>
+            </div>
+          </div>
+            
+        </div>
+      </div>
+      <div class="box-footer">
+          <input type="hidden" name="id" value="{$game_info['id']|default='0'}"/>
+        {include file="layout/edit_btn_group"/}
+      </div>
+    </div>
+</form>

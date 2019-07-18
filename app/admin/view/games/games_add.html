@@ -1,0 +1,58 @@
+<form action="{:url()}" method="post" class="form_single">
+    <div class="box">
+      <div class="box-body">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>游戏中文名称</label>
+              <!-- <span>（用户名会作为默认的昵称）</span> -->
+              <input class="form-control" name="cname" placeholder="请输入中文名称" type="text">
+            </div>
+          </div>
+ 
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>游戏英文名称</label>
+              <!-- <span>（用户密码不能少于6位）</span> -->
+              <input class="form-control" name="ename" placeholder="请输入英文名称" type="text">
+            </div>
+          </div>
+ 
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>热度</label>
+              <!-- <span>（确认密码需要和密码一致）</span> -->
+              <input class="form-control" name="hot" placeholder="请输入热度" type="text">
+            </div>
+          </div>
+ 
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>缩略图</label>
+              <!-- <span>（用户邮箱，用于找回密码等安全操作）</span> -->
+              <!-- <input class="form-control" name="email" placeholder="请输入邮箱" type="text"> -->
+              <!-- 《<input type="text"> -->
+              
+              {:widget('file/index', ['name' => 'headimgurl', 'value' => '', 'type' => 'img'])}
+            </div>
+          </div>
+            
+          <div class="col-md-6">
+            <div class="form-group">
+                <label>状态</label>
+                <span>（是否显示，默认是，显示）</span>
+                <div>
+                    <label class="margin-r-5"><input checked="checked"  type="radio" name="status" value="1"> 显示</label>
+                    <label><input type="radio" name="status" value="2"> 不显示</label>
+                </div>
+            </div>
+          </div>
+            
+        </div>
+      </div>
+      <div class="box-footer">
+        
+        {include file="layout/edit_btn_group"/}
+      </div>
+    </div>
+</form>

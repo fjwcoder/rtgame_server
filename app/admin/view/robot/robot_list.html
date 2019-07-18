@@ -1,8 +1,18 @@
 
 <div class="box">
     <div class="box-header ">
+        <div class="layui-form-item" style="margin-bottom: 0px;">
+            <label class="layui-form-label" style="width: 150px;">
+                <input type="text" name="g_num" required="" placeholder="请输入数量" class="layui-input">
+            </label>
+            <div class="layui-input-block">
+                <input type="radio" name="g_type" value="1" checked="checked">代练
+                <input type="radio" name="g_type" value="2">陪玩
+                <button type="button" class="btn btn-default" id="addRobotData"><i class="fa fa-plus"></i>生成数据</button>
+            </div>
+        </div>
 
-      <div class="box-tools ">
+        <div class="box-tools ">
           <div class="input-group layui-form input-group-sm search-form">
                 <div class="layui-inline" >
                     <label class="layui-form-label">进度：</label>
@@ -64,12 +74,13 @@
         var table = layui.table
         ,layer = layui.layer
         ,laypage = layui.laypage
-        ,form = layui.form;
+        ,form = layui.form
+        ,$ = layui.jquery;
         
         table.render({
             elem: '#test'
             ,id: 'orderTable'
-            ,url:'/admin.php/Order/getOrderList'
+            ,url:'/admin.php/Robot/getRobotData'
             ,where: splitWhere
             ,toolbar: true //开启工具栏，此处显示默认图标，可以自定义模板，详见文档
             ,limit: 15
@@ -224,6 +235,19 @@
                 layer.closeAll('loading');
             }
         });
-
     }
+    $('#addRobotData').on('click',function(){
+        var r = /^\+?[1-9][0-9]*$/;
+        var g_num = $.trim($('input[name="g_num"]').val());
+        // if(g_num == '' || !r.test(g_num)){ layer.msg('请输入正确的正整数'); return; }
+        var g_type = $.trim($('input[name="g_type"]:checked').val());
+        $.post('{:url("addRobotData")}',{'num':g_num,'type':g_type},function(res){
+            if(res.code == 400){
+                layer.msg(res.msg);
+            }else{
+                layer.msg(res.msg);
+                setTimeout(function(){ window.location.reload(); },1000);
+            }
+        },'json');
+    });
 </script>

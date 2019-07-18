@@ -28,9 +28,11 @@ class Order extends AdminBase
             [SYS_DB_PREFIX."game_plantform j", " a.plantform_id = j.id", "left"],
             [SYS_DB_PREFIX."order_detail d", "a.id=d.oid", "left"],
             
-        ];
+        ];       
+
+        // FengQiMan 2019-07-15 添加订单表 order_type 字段 默认为1 1：代练 2：陪玩
         $field = 'a.id, a.order_id, v.cname as game_name, j.name as plantform_name, 
-            a.area_name, a.pay_money, a.step, a.status, a.create_time, 
+            a.area_name, a.pay_money, a.step, a.status, a.create_time, a.order_type,
             
             d.begin_info, d.end_info
             

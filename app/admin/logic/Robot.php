@@ -221,9 +221,9 @@ class Robot extends AdminBase
     // 2019-07-17 FengQiMan  根据游戏类型 判断英雄 段位 等信息 - 代练
     public function getHeroDInfo($game_id = 0)
     {
-        // 服务id plantform_id
+        // 平台id plantform_id
         $plantform_id = '';
-        // 什么区 area_name
+        // 区服信息 area_name
         $area_name = '';
         // 游戏信息 game_info
         $game_info = '';
@@ -599,7 +599,7 @@ class Robot extends AdminBase
         $user_id = mt_rand('8888','9999');
         // 游戏id game_id
         $game_id = 4;//rRomdomD('1,2');//和平精英的ID
-        // 区服 plantform_id
+        // 平台id plantform_id
         $plantform_id = rRomdomD('9,10,11,12');
 
         // 特殊说明 special_info

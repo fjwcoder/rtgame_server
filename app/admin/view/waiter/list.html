@@ -37,11 +37,12 @@
     
         <div class="box-body table-responsive">
             <table class="layui-hide" id="test" lay-filter="order_test"></table>
-            <!-- <script type="text/html" id="barOrder">
+            <script type="text/html" id="barOrder">
                 
-                <a class="layui-btn layui-btn-primary order-assign-btn layui-btn-xs" lay-event="reject">驳回</a>
-                <a class="layui-btn order-assign-btn layui-btn-xs" lay-event="pass">通过</a>
-              </script> -->
+                <!-- <a class="layui-btn layui-btn-primary order-assign-btn layui-btn-xs" lay-event="reject">驳回</a>
+                <a class="layui-btn order-assign-btn layui-btn-xs" lay-event="pass">通过</a> -->
+                <a class="layui-btn order-assign-btn layui-btn-xs" lay-event="checkWaiter">查看信息</a>
+              </script>
         </div>
       
     
@@ -93,7 +94,7 @@
                             default: return '未知';
                         }
                     }}
-                    // ,{fixed: 'right', title: '操作', width: 120, align:'center', toolbar: '#barOrder'} //, fixed: 'right'
+                    ,{fixed: 'right', title: '操作', width: 120, align:'center', toolbar: '#barOrder'} //, fixed: 'right'
                 ]]
     
                 ,parseData: function(res){ //将原始数据解析成 table 组件所规定的数据
@@ -143,6 +144,8 @@
                         rejectWaiter(waiter_id, openid, val);
                         layer.close(index);
                     });
+                }else if(layEvent === 'checkWaiter'){
+                    window.location.href="getWaiterInfo?id="+waiter_id+"&openid="+openid;
                 }
                 layer.closeAll('loading');
             });

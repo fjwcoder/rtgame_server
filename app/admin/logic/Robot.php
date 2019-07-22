@@ -60,7 +60,7 @@ class Robot extends AdminBase
                     'game_info'     =>  $order_info['game_info']['game_info'],
                     'special_info'  =>  $order_info['special_info'],
                     // 'server_id'     =>  $order_info['game_info']['server_id'],
-                    'step'          =>  2,
+                    'step'          =>  3,//修改订单为已接订单
                     'waiter_id'     =>  0,
                     'create_time'   =>  $order_info['create_time'],
                     'pay_time'      =>  $order_info['pay_time'],
@@ -632,7 +632,7 @@ class Robot extends AdminBase
             'server_type'   =>  $server_type,
             'server_con'    =>  $server_con,
             'waiter_id'     =>  0,
-            'step'          =>  2,
+            'step'          =>  3,//修改订单为已接订单
         ];
 
         return $data;

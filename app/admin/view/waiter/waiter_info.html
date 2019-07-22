@@ -1,0 +1,80 @@
+<!-- <form action="{:url()}" method="post" class="form_single"> -->
+    <div class="box">
+      	<div class="box-body">
+        	<div class="row">
+
+          		<div class="col-md-6">
+            		<div class="form-group">
+		              	<label>user_id</label>
+		              	<!-- <span>（）</span> -->
+		              	<input class="form-control" name="user_id"  type="text" value="{$data.user_id}" disabled>
+		            </div>
+		        </div>
+		        <div class="col-md-6">
+            		<div class="form-group">
+		              	<label>openid</label>
+		              	<!-- <span>（）</span> -->
+		              	<input class="form-control" name="openid" type="text" value="{$data.openid}" disabled>
+		            </div>
+		        </div>
+		        <div class="col-md-6">
+            		<div class="form-group">
+		              	<label>昵称</label>
+		              	<!-- <span>（）</span> -->
+		              	<input class="form-control" name="nickname" type="text" value="{$data.nickname}" disabled>
+		            </div>
+		        </div>
+		        <div class="col-md-6">
+            		<div class="form-group">
+		              	<label>姓名</label>
+		              	<!-- <span>（）</span> -->
+		              	<input class="form-control" name="realname" type="text" value="{$data.realname}" disabled>
+		            </div>
+		        </div>
+		        <div class="col-md-6">
+            		<div class="form-group">
+		              	<label>身份证号</label>
+		              	<!-- <span>（）</span> -->
+		              	<input class="form-control" name="id_card" type="text" value="{$data.id_card}" disabled>
+		            </div>
+		        </div>
+		        <div class="col-md-6">
+            		<div class="form-group">
+		              	<label>年龄 / 性别</label>
+		              	<span>（性别：1：男，2：女，0：未知）</span>
+		              	<input class="form-control" name="" type="text" value="{$data.age} / {$data.sex}" disabled>
+		            </div>
+		        </div>
+		        <div class="col-md-6">
+            		<div class="form-group">
+		              	<label>手机号</label>
+		              	<!-- <span>（）</span> -->
+		              	<input class="form-control" name="mobile" type="text" value="{$data.mobile}" disabled>
+		            </div>
+		        </div>
+		        <div class="col-md-6">
+            		<div class="form-group">
+		              	<label>状态</label>
+		              	<!-- <span>（）</span> -->
+		              	<input class="form-control" name="status" type="text" value="{switch name="$data['status']" }{case value="1"}正常{/case}{case value="2"}锁定{/case}{case value="3"}待审核{/case}{default /}未知{/switch}" disabled />
+		            </div>
+		        </div>
+
+		        <div class="col-md-6">
+            		<div class="form-group">
+		              	<label>头像</label>
+		              	<span>（<a href="{$data.headimgurl}" target="_blank">点击查看</a>）</span>
+		              	<!-- <img src=""> -->
+		              	<input class="form-control" name="headimgurl" type="text" value="{$data.headimgurl}" disabled>
+		            </div>
+		        </div>
+
+	            
+	        </div>
+	    </div>
+	    <div class="box-footer">
+	        <a class="btn" onclick="javascript:history.back(-1);return false;"><i class="fa fa-history"></i> 返 回</a>
+	        <!-- {include file="layout/edit_btn_group"/} -->
+	    </div>
+	</div>
+<!-- </form> -->

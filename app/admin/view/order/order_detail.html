@@ -1,0 +1,143 @@
+<!-- <form action="{:url()}" method="post" class="form_single"> -->
+    <div class="box">
+        <div class="box-body">
+            <div class="row">
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>订单号</label>
+                        <!-- <span>（）</span> -->
+                        <input class="form-control" name="order_id" type="text" value="{$data.order_id}" disabled>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>游戏名称 / 区服 / 大区</label>
+                        <!-- <span>（）</span> -->
+                        <input class="form-control" name="game_name" type="text" value="{$data.game_name} / {$data.plantform_name} / {$data.area_name}" disabled>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>用户手机号</label>
+                        <!-- <span>（）</span> -->
+                        <input class="form-control" name="user_mobile" type="text" value="{$data.user_mobile}" disabled>
+                    </div>
+                </div>
+
+                {if condition="$data['order_type'] == 1"}
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>游戏账号</label>
+                            <!-- <span>（）</span> -->
+                            <input class="form-control" name="game_account" type="text" value="{$data.game_account}" disabled>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>游戏密码</label>
+                            <!-- <span>（）</span> -->
+                            <input class="form-control" name="game_password" type="text" value="{$data.game_password}" disabled>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>游戏昵称</label>
+                            <!-- <span>（）</span> -->
+                            <input class="form-control" name="game_user" type="text" value="{$data.game_user}" disabled>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>开始信息 / 结束信息</label>
+                            <!-- <span>（）</span> -->
+                            <input class="form-control" name="" type="text" value="{$data.begin_info} / {$data.end_info}" disabled>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>游戏信息</label>
+                            <!-- <span>（）</span> -->
+                            <input class="form-control" name="game_info" type="text" value="{$data.game_info}" disabled>
+                        </div>
+                    </div>
+                {else/}
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>服务类型 服务时长</label>
+                            <!-- <span>（）</span> -->
+                            {if condition="$data['server_type'] == '1'"}
+                                <input class="form-control" name="" type="text" value="{$data.server_con} / 小时" disabled>
+                            {else/}
+                                <input class="form-control" name="" type="text" value="{$data.server_con} / 局" disabled>
+                            {/if}
+                            
+                        </div>
+                    </div>
+                {/if}
+                
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>支付金额 / 支付时间</label>
+                        <!-- <span>（）</span> -->
+                        <input class="form-control" name="pay_money" type="text" value="{$data.pay_money} / {if condition="$data['pay_time'] == ''"}未支付{else/}{$data.pay_time|date="Y-m-d H:i:s",###}{/if}" disabled>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>服务金额</label>
+                        <!-- <span>（）</span> -->
+                        <input class="form-control" name="server_price" type="text" value="{$data.server_price}" disabled>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>特殊信息</label>
+                        <!-- <span>（）</span> -->
+                        <input class="form-control" name="special_info" type="text" value="{$data.special_info}" disabled>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>接单员ID</label>
+                        <!-- <span>（）</span> -->
+                        <input class="form-control" name="waiter_id" type="text" value="{$data['waiter_id'] ? $data['waiter_id'] : '待分配'}" disabled>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>订单创建时间</label>
+                        <!-- <span>（）</span> -->
+                        <input class="form-control" name="create_time" type="text" value="{$data.create_time}" disabled>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>订单完成时间</label>
+                        <!-- <span>（）</span> -->
+                        <input class="form-control" name="finish_time" type="text" value="{$data.finish_time}" disabled>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>服务图片</label>
+                        <!-- <span>（）</span> -->
+                        <input class="form-control" name="server_img" type="text" value="{$data.server_img}" disabled>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="box-footer">
+            <!-- id user_id -->
+            <!-- {include file="layout/edit_btn_group"/} -->
+            <a class="btn" onclick="javascript:history.back(-1);return false;"><i class="fa fa-history"></i> 返 回</a>
+        </div>
+    </div>
+<!-- </form> -->

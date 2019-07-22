@@ -73,6 +73,18 @@ class Order extends AdminBase
         return $data;
     }
 
+    /**
+     * @Author: FengQiMan
+     * @Descripttion: 查看订单详情
+     * @Date: 2019-07-22 10:19:13
+     */
+    public function getOrderDetail(){
+        // d($this->param);
+        // dd($this->logicOrder->getOrderDetail($this->param));
+        $this->assign('data',$this->logicOrder->getOrderDetail($this->param));
+        return $this->fetch('order_detail');
+    }
+
 
 
 }

@@ -13,6 +13,7 @@ namespace app\api\controller;
 
 use app\common\controller\ControllerBase;
 
+use app\api\error\Common as CommonError;
 /**
  * PROJECT_创建订单
  * 
@@ -74,9 +75,16 @@ class Order extends ApiBase
         
         //    $where['a.order_id'] = $this->param['order_id'];
         //    $where['a.oid'] = $this->param['oid'];
-
-
-        return $this->apiReturn($this->logicOrder->getOrderDetail($this->param));
+        // dd($this->param['true_type']);
+        // 19.7.22 fengqiman 添加 true_type 字段 1：
+        if(isset($this->param['true_type']) && $this->param['true_type'] == '2'){
+            return $this->apiReturn($this->logicRobot->getROrderDetail($this->param));
+        }elseif(isset($this->param['true_type']) && $this->param['true_type'] == '1'){
+            return $this->apiReturn($this->logicOrder->getOrderDetail($this->param));
+        }else{
+            return $this->apiReturn(CommonError::$getError); // 没有传 true_type 查询失败;
+        }
+        
         // die;
     }
  /**

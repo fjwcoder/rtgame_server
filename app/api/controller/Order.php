@@ -79,10 +79,13 @@ class Order extends ApiBase
         // 19.7.22 fengqiman 添加 true_type 字段 1：
         if(isset($this->param['true_type']) && $this->param['true_type'] == '2'){
             return $this->apiReturn($this->logicRobot->getROrderDetail($this->param));
-        }elseif(isset($this->param['true_type']) && $this->param['true_type'] == '1'){
-            return $this->apiReturn($this->logicOrder->getOrderDetail($this->param));
+
+        // 19.2.25 fengqiman 修改查询订单中不传 true_type 字段问题，前期小程序查看订单详情不传 true_type 字段
+        // }elseif(isset($this->param['true_type']) && $this->param['true_type'] == '1'){
+        //     return $this->apiReturn($this->logicOrder->getOrderDetail($this->param));
         }else{
-            return $this->apiReturn(CommonError::$getError); // 没有传 true_type 查询失败;
+            return $this->apiReturn($this->logicOrder->getOrderDetail($this->param));
+            // return $this->apiReturn(CommonError::$getError); // 没有传 true_type 查询失败;
         }
         
         // die;

@@ -372,7 +372,8 @@ class Order extends ApiBase
         $where = ['order_id'=>$param['order_id'], 'id'=>$param['id'], 'step'=>$param['step']];
         $order = $this->modelOrder->getInfo($where);
         if($order){
-            $change = $this->modelOrder->updateInfo($where, ['step'=>$param['next']]);
+            // add fqm 2019.7.26 添加订单完成时间
+            $change = $this->modelOrder->updateInfo($where, ['step'=>$param['next'],'finish_time'=>time()]);
             if($change){
                 return true;
             }else{

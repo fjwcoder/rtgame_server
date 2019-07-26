@@ -13,6 +13,7 @@ namespace app\api\controller;
 
 use app\common\controller\ControllerBase;
 
+use app\api\error\Common as CommonError;
 /**
  * PROJECT_创建订单
  * 
@@ -74,9 +75,19 @@ class Order extends ApiBase
         
         //    $where['a.order_id'] = $this->param['order_id'];
         //    $where['a.oid'] = $this->param['oid'];
+        // dd($this->param['true_type']);
+        // 19.7.22 fengqiman 添加 true_type 字段 1：
+        if(isset($this->param['true_type']) && $this->param['true_type'] == '2'){
+            return $this->apiReturn($this->logicRobot->getROrderDetail($this->param));
 
-
-        return $this->apiReturn($this->logicOrder->getOrderDetail($this->param));
+        // 19.2.25 fengqiman 修改查询订单中不传 true_type 字段问题，前期小程序查看订单详情不传 true_type 字段
+        // }elseif(isset($this->param['true_type']) && $this->param['true_type'] == '1'){
+        //     return $this->apiReturn($this->logicOrder->getOrderDetail($this->param));
+        }else{
+            return $this->apiReturn($this->logicOrder->getOrderDetail($this->param));
+            // return $this->apiReturn(CommonError::$getError); // 没有传 true_type 查询失败;
+        }
+        
         // die;
     }
  /**
@@ -129,27 +140,6 @@ class Order extends ApiBase
         return $this->apiReturn($this->logicOrder->getIndexOrder());
     }
 
-   /**
-    * @Author: FengQiMan
-    * @Descripttion: 接单大厅订单列表 各游戏下订单列表
-    * @Date: 2019-07-16 10:24:24
-    */ 
-    public function hallGOrderList()
-    {
-        return $this->apiReturn($this->logicOrder->hallGOrderList($this->param));
-    }
-
-    /**
-     * @Author: FengQiMan
-     * @Descripttion: 查看未接单订单详情 返回订单信息 当前用户权限
-     * @param {type} 
-     * @Date: 2019-07-16 16:14:21
-     */
-    public function getGOrderDetail()
-    {
-        return $this->apiReturn($this->logicOrder->getGOrderDetail($this->param));
-    }
-    
 
    
 }

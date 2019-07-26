@@ -63,6 +63,17 @@ class Waiter extends AdminBase
         return $this->logicWaiter->rejectWaiter($waiter_id, $openid, $reasion);
     }
 
+    /**
+     * @Author: FengQiMan
+     * @Descripttion: 查看代练信息
+     * @Date: 2019-07-22 11:18:16
+     */
+    public function getWaiterInfo(){
+        // dd($this->logicWaiter->getWaiterInfo($this->param));
+        $this->assign('data',$this->logicWaiter->getWaiterInfo($this->param));
+        return $this->fetch('waiter_info');
+    }
+
 
 
 

@@ -984,7 +984,7 @@ function createPHPQrcode($url='地址为空', $is_logo=false){
     
 }
 
-    // 2019-07-17 fqm
+    // 添加 2019-07-17 FengQiMan
     // 传一组以英文逗号隔开的数，返回一个随机数
     function rRomdomD($data = ''){
         $list = explode(",", $data);
@@ -992,3 +992,12 @@ function createPHPQrcode($url='地址为空', $is_logo=false){
         $randnum = mt_rand(0, $cmax);
         return $list[$randnum];
     }
+
+    // 添加 2019-07-18 FengQiMan
+    // 生成11位随机号码 不真实
+    function createMobile(){
+        // 前三位
+        $mobiles = array(130,131,132,133,134,135,136,137,138,139,144,147,150,151,152,153,155,156,157,158,159,176,177,178,180,181,182,183,184,185,186,187,188,189);
+
+        return $mobiles[array_rand($mobiles)].mt_rand(1000,9999).mt_rand(1000,9999);
+    } 

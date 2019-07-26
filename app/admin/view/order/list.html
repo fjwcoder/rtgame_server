@@ -43,8 +43,8 @@
     <div class="box-body table-responsive" > 
         <table class="layui-hide" id="test" lay-filter="order_test"></table>
         <script type="text/html" id="barOrder">
-            
-            <a class="layui-btn order-assign-btn layui-btn-xs" lay-event="assign">确定</a>
+            <a class="layui-btn order-assign-btn layui-btn-xs" lay-event="assign">确定分配</a>
+            <a class="layui-btn order-assign-btn layui-btn-xs" lay-event="checkOrder">查看详情</a>
           </script>
     </div>
   
@@ -182,9 +182,13 @@
                         assignWaiter(data.id, data.order_id, waiter_id);
                     });
                 }
-                
-                
-            } 
+            } else if(layEvent === 'checkOrder'){
+                var o_id =  data.id;
+                var order_id =  data.order_id;
+                // console.log(o_id+"---"+order_id);
+                window.location.href="getOrderDetail?o_id="+o_id+"&order_id="+order_id;
+
+            }
             layer.closeAll('loading');
         });
         

@@ -102,9 +102,9 @@ class Order extends ApiBase
                 $order_detail[] = [
                     'order_id'=>$order_id,
                     'user_id'=>$user_id,
-                    'server_id'=>$v['server_id'],
+                    // 'server_id'=>$v['server_id'],// 服务id game_server 表
                     'begin_info'=>isset($v['begin_info'])?$v['begin_info']:'',
-                    'end_info'=>$v['end_info'],
+                    'end_info'=>isset($v['begin_info'])?$v['begin_info']:'',
                     'server_price'=>$v['server_price'],
                     'server_img'=>'',
                     'server_type'=>intval($v['server_type']),
@@ -116,7 +116,7 @@ class Order extends ApiBase
                 'order_id'=>$order_id,
                 'user_id' =>intval($user_id),
                 'game_id' => intval($param['game_id']),
-                // 'plantform_id'=>intval($param['plantform_id']),
+                'plantform_id'=>intval($param['plantform_id']),
                 // 'area_name'=>$param['area_name'],
                 'user_mobile'=>$param['user_mobile'],
                 'pay_money' => $pay_money,
@@ -190,27 +190,48 @@ class Order extends ApiBase
     public function getOrderDetail($param = []){
         $paginate = false;
        
-       $decoded_user_token = $param['decoded_user_token'];
-        //    $where = ['a.user_id'=>$decoded_user_token->user_id];
+        $decoded_user_token = $param['decoded_user_token'];
+        // add fengqiman 2019.7.19 当前用户id
+        $user_id = $decoded_user_token->user_id;
+        // add fengqiman 2019.7.19 判断当前用户是不是代练
+        $waiter = $this->modelWaiter->getInfo(['user_id'=>$user_id]);
+        // if (empty($waiter)){
+        //     return [API_CODE_NAME => 40202, API_MSG_NAME => '该用户不是代练人员']; 
+        // }
+
+        //  add fengqiman 2019.7.19 查看当前订单的 代练id waiter_id 和 用户id user_id
+        $w_where['order_id'] = $param['order_id'];
+        $w_where['id'] = $param['oid'];
+        $w_field = 'waiter_id,user_id';
+        $order_u_w = $this->modelOrder->getInfo($w_where,$w_field);
+
+        // 添加获取字段 order_type 判断是订单类型 1.代练 2.陪玩 
+        // add fengqiman 2019.7.19 当前用户是发单用户 或者 当前用户是该订单的代练 可以看密码
+        if($order_u_w['user_id'] == $user_id || $order_u_w['waiter_id'] == $waiter['id']){
+            $field = 'a.id, a.order_id, a.area_name, a.game_info, a.special_info, a.pay_money, a.user_mobile,a.game_account, a.game_password,a.waiter_id, a.pay_time,a.finish_time,a.create_time,a.step,a.status,a.order_type,v.cname as game_name, j.name as plantform_name, k.nickname as waiter_name,k.headimgurl';
+        }else{
+            $field = 'a.id, a.order_id, a.area_name, a.game_info, a.special_info, a.pay_money, a.user_mobile,a.game_account,a.waiter_id, a.pay_time,a.finish_time,a.create_time,a.step,a.status,a.order_type,v.cname as game_name, j.name as plantform_name, k.nickname as waiter_name,k.headimgurl';
+        }
+        
         if(isset($param['step']) && $param['step'] > 0 ){
             $where['a.step'] = $param['step'];
         }
-       $where['a.order_id'] = $param['order_id'];
-       $where['a.id'] = $param['oid'];
-       $this->modelOrder->alias('a');//设置当前数据表的别名
- 
-        $field = 'a.id, a.order_id, 
-            a.area_name, a.game_info, a.special_info, a.pay_money, a.user_mobile,
-            a.game_account, 
-            a.game_password,
-            a.waiter_id, a.pay_time,a.finish_time,a.create_time,a.step,a.status
+        
+        $where['a.order_id'] = $param['order_id'];
+        $where['a.id'] = $param['oid'];
+        $this->modelOrder->alias('a');//设置当前数据表的别名
+        // $field = 'a.id, a.order_id, 
+        //     a.area_name, a.game_info, a.special_info, a.pay_money, a.user_mobile,
+        //     a.game_account, 
+        //     a.game_password,
+        //     a.waiter_id, a.pay_time,a.finish_time,a.create_time,a.step,a.status,a.order_type
 
-            ,v.cname as game_name, 
-            j.name as plantform_name, 
+        //     ,v.cname as game_name, 
+        //     j.name as plantform_name, 
 
-            k.nickname as waiter_name,
-            k.headimgurl
-            ';
+        //     k.nickname as waiter_name,
+        //     k.headimgurl
+        //     ';
         // $order='a.order_id desc';
        
         $this->modelOrder->join = [
@@ -235,7 +256,8 @@ class Order extends ApiBase
         $where = [];
         $where['d.order_id'] = $param['order_id'];
         $where['d.oid'] = $param['oid'];
-        $field = 'g.name as server_name,d.begin_info,d.end_info,d.server_price,d.server_img, d.id as s_id';
+        // 2019.7.19 fengqiman 添加字段 server_type 陪玩订单类型 1.按小时 2.按局数  server_con n小时或n局
+        $field = 'g.name as server_name,d.begin_info,d.end_info,d.server_price,d.server_img, d.id as s_id,d.server_type,d.server_con';
         // $order = 'd.oid desc';
         $this->modelOrderDetail->alias('d');//设置当前数据表的别名
         
@@ -286,8 +308,8 @@ class Order extends ApiBase
         if (isset($param['gid']) && $param['gid'] != 0){
             $where['a.game_id'] = $param['gid'];
         }
-        
-        $order='a.pay_money desc';
+        // 按订单创建时间排序
+        $order='a.create_time desc';
         $this->modelOrder->alias('a');//设置当前数据表的别名
   
          $field = 'a.id,a.order_id ,v.cname as game_name, j.name as plantform_name, 
@@ -320,7 +342,16 @@ class Order extends ApiBase
         // add by fjw: 增加验证：如果该用户不存在，需要返回给前台信息
         if(empty($waiter)){
             return CommonError::$refuseError; //  没有权限接受订单;
-          }
+        }
+        // 添加 fengqiman 2019.7.19 增加验证：判断当前用户是不是发单用户，不能自己抢自己的订单
+        $order_info = $this->modelOrder->getInfo(['id'=>$oid,'order_id'=>$order_id],'user_id,waiter_id');
+        // dd($order_user_id);
+        if($order_info['user_id'] == $user_id){
+            return [API_CODE_NAME => 40030, API_MSG_NAME => '不能抢自己的订单'];
+        }
+        if($order_info['waiter_id'] != 0){
+            return [API_CODE_NAME => 40030, API_MSG_NAME => '订单已被抢'];
+        }
         $waiter_id = $waiter['id'];
         if($this->modelOrder->assignWaiter($oid, $order_id, $waiter_id)){
             return true;
@@ -477,92 +508,6 @@ class Order extends ApiBase
         return $data;
     }
 
-    /**
-     * @Author: FengQiMan
-     * @Descripttion: 接单大厅订单列表 各游戏下订单列表
-     * @param {type} 
-     * @Date: 2019-07-16 10:34:46
-     */
-    public function hallGOrderList($param = [])
-    {
-        $gid = isset($param['gid'])?$param['gid']:'0';
-        // $gid = $this->param['gid'];
-        // dd($gid);
-        if ($gid == 0 || $gid == '') {
-            $where = [
-                'step' => 2
-            ];
-        }else{
-            $where = [
-                'step' => 2,
-                'game_id' => $gid
-            ];
-        }
-
-        $this->modelOrder->alias('a');
-
-        $field = 'a.id, a.order_id, a.game_id, d.begin_info, d.end_info, d.server_price, v.cname';
-
-        $this->modelOrder->join = [
-            [SYS_DB_PREFIX."game_list v", "a.game_id = v.id", "left"],
-            [SYS_DB_PREFIX."order_detail d", "a.id = d.oid", "left"]
-        ];
-
-        $order = 'a.create_time desc';//按订单创建时间排序 最新最靠前
-        
-        return $this->modelOrder->getList($where,$field,$order,10);
-        
-    }
-
-    /**
-     * @Author: FengQiMan
-     * @Descripttion: 查看未接单订单详情 返回订单信息 当前用户权限
-     * @param {type} 
-     * @Date: 2019-07-16 16:13:05
-     */
-    public function getGOrderDetail($param = []){
-        // $oid = $param['oid'];
-        // $order_id = $param['order_id'];
-        // $decoded_user_token = $param['user_token'];
-        $oid = 1;
-        $order_id = 'GPI524905158106024';
-        // $decoded_user_token = $param['user_token'];
-        // $user_id =  $decoded_user_token->user_id;
-        $user_id =  100;
-        // 当前用户信息 可以接单的游戏列表 状态
-        // $this->modelWaiter->alias('w');
-        $where_w = [
-            'user_id' => $user_id,
-        ];
-        $waiter = $this->modelWaiter->getInfo($where_w,'id,user_id,game_id_list,status');
-        // if(empty($waiter)){
-        //     return CommonError::$refuseError; //  没有权限接受订单;
-        // }
-        // dd($waiter);
-        // $waiter_id = $waiter['id'];
-        // 当前订单的信息
-        $this->modelOrder->alias('a');
-        $where = [
-            'a.id' => $oid,
-            'a.order_id' => $order_id,
-        ];
-        $this->modelOrder->join = [
-            [SYS_DB_PREFIX."game_list v", "a.game_id = v.id", "left"],
-            [SYS_DB_PREFIX."order_detail d", "a.id = d.oid", "left"]
-        ];
-        $field = 'a.id,a.order_id,a.user_id,v.cname as game_cname,a.plantform_id,a.area_name,a.user_mobile,a.pay_money,a.game_info,a.step,a.status,a.order_type,d.begin_info,d.end_info,d.server_price,d.server_img,d.server_type,d.server_con';
-
-        $order = $this->modelOrder->getInfo($where,$field);
-        // if($waiter && $order){
-        if($order){
-            $data['waiter'] = $waiter;
-            $data['order'] = $order;
-            return $data;
-        }else{
-            return [API_CODE_NAME => 40030, API_MSG_NAME => '网络错误'];
-        }
-    }
-    
 
 
 }

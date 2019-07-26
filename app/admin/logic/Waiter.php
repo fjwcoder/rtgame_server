@@ -46,6 +46,21 @@ class Waiter extends AdminBase
         
     }
 
+    /**
+     * @Author: FengQiMan
+     * @Descripttion: 查看代练信息
+     * @Date: 2019-07-22 11:18:56
+     */
+    public function getWaiterInfo($param = []){
+        $id = $param['id'];
+        $openid = $param['openid'];
+        $where = [
+            'id'=>$id,
+            // 'openid' => $openid,
+        ];
+        return $this->modelWaiter->getInfo($where);
+    }
+
 
 
 

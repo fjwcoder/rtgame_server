@@ -45,4 +45,32 @@ class Order extends AdminBase
 
         return $this->modelOrder->assignWaiter($oid, $order_id, $waiter_id, false);
     }
+
+    /**
+     * @Author: FengQiMan
+     * @Descripttion: 查看订单详情
+     * @Date: 2019-07-22 10:22:22
+     */
+    public function getOrderDetail($param = []){
+        $oid = $param['o_id'];
+        $order_id = $param['order_id'];
+        $where = [
+            'a.id' => $oid,
+            'a.order_id' => $order_id,
+        ];
+        $this->modelOrder->alias('a');
+        
+        $this->modelOrder->join = [
+            [SYS_DB_PREFIX."game_list v", "a.game_id = v.id", "left"],
+            [SYS_DB_PREFIX."game_plantform j", " a.plantform_id = j.id", "left"],
+            [SYS_DB_PREFIX."order_detail d", "a.id=d.oid", "left"],
+        ];
+        
+        $field = 'a.id, a.order_id, a.user_id,v.cname as game_name,j.name as plantform_name,a.area_name,a.user_mobile,a.game_account,a.game_password,a.game_user,a.pay_money,a.game_info,a.special_info,a.step,a.waiter_id,a.create_time,a.pay_time,a.finish_time,a.status,a.order_type,d.server_id,d.begin_info,d.end_info,d.server_price,d.server_img,d.server_type,d.server_con
+            ';
+
+        return $this->modelOrder->getInfo($where, $field, '', false);
+    }
+
+
 }

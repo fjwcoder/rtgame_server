@@ -6,3 +6,4 @@
 /app/database.php
 *.sql
 *database.php
+*.txt
